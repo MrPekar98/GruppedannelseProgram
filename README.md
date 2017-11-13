@@ -1,2 +1,2 @@
-# GruppedannelseProgram
-**Program vejledning
+# Gruppedannelse program
+Program vejledning

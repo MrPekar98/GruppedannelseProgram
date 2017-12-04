@@ -10,7 +10,8 @@
 
 # Program struktur
 Input parametre:
-
+- Antal studerende.
+- Gruppestørrelse.
 
 # Struct:
 Members:

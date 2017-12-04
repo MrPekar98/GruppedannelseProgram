@@ -10,6 +10,23 @@
 
 # Program struktur
 Input parametre:
-- Antal piger.
-- Antal drenge.
-- Antal grupperum til rådighed.
+
+
+# Struct:
+Members:
+- char *navn.
+- char køn.
+
+struct BelbinTestResult:
+- int plant.
+- int MonitorEvaluator.
+- int specialist.
+- int shaper.
+- int implementer.
+- int CompleterFinisher.
+- int coordinator.
+- int teamworker.
+- int ResourceInvestigator.
+
+# Main
+enum PersonalityTypes = {Type1 = 1, Type2, Type3, Type4};

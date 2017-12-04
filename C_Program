@@ -1,7 +1,53 @@
 #include <stdio.h>
 
+/* Enumerations */
+enum type_t = {Type1 = 1, Type2, Type3, Type4};
+typedef enum type_t type_t;
+
+/* Structs */
+/* Belbin struct */
+struct BelbinTestData
+{
+    int plant;
+    int MonitorEvaluator;
+    int specialist;
+    int shaper;
+    int implementer;
+    int CompleterFinisher;
+    int coordinator;
+    int teamworker;
+    int ResourceInvestigator;
+};
+
+/* Main struct: person struct */
+struct person
+{
+    char *name;
+    char sex;
+    
+    /* Belbin struct declaration */
+    struct BelbinTestData belbin;
+};
+typefed struct person PersonData;
+
+/* Protocols */
+
+/* Main function */
 int main()
 {
+    int ArraySize;
+    
+    printf("Array size: ");
+    int test = scanf("%d", &ArraySize);
+    
+    if (test != 1)
+    {
+        printf("Format exception.\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    /* Data array: Containing all information about every student. */
+    PersonData persons[ArraySize];
     
     return 0;
 }

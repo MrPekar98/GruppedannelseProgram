@@ -35,19 +35,20 @@ typefed struct person PersonData;
 /* Main function */
 int main()
 {
-    int ArraySize;
+    int AmountOfStudents, GroupSize;
     
-    printf("Array size: ");
-    int test = scanf("%d", &ArraySize);
+    printf("Amount of students: ");
+    int test = scanf("%d", &AmountOfStudents);
+    int test2 = scanf("%d", &GroupSize);
     
-    if (test != 1)
+    if (test != 1 || test2 != 1)
     {
         printf("Format exception.\n");
         exit(EXIT_FAILURE);
     }
     
     /* Data array: Containing all information about every student. */
-    PersonData persons[ArraySize];
+    PersonData persons[AmountOfStudents];
     
     return 0;
 }

@@ -6,6 +6,8 @@
 - Husk masser af kommentarer på engelsk.
 - Kommentarer skal være tilføjet inden commit.
 - Husk passende afsnit.
+- Variabler starter med småt bogstav.
+- Ord skilles med stort bogstav og ikke underscore.
 
 # Program vejledning
 

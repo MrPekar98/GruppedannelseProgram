@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /* Enumerations */
-enum type_t = {Visionære = 1, Idealist, Dirigent, Fejlfinder};
+enum type_t = {visionære = 1, idealist, dirigent, fejlfinder};
 typedef enum type_t PersonlighedsType;
 
 /* Structs */

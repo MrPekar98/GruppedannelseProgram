@@ -17,7 +17,6 @@ struct BelbinTestData
     int Coordinator;
     int Teamworker;
     int ResourceInvestigator;
-    Martin er en ludder
 };
 
 /* Main struct: person struct */

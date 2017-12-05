@@ -1,21 +1,21 @@
 #include <stdio.h>
 
 /* Enumerations */
-enum type_t = {visionære = 1, idealist, dirigent, fejlfinder};
-typedef enum type_t PersonlighedsType;
+enum type_t = {visionary = 1, idealist, dirigent, troubleshooter};
+typedef enum type_t PersonType;
 
 /* Structs */
 /* Belbin struct */
 struct BelbinTestData
 {
-    int plant;
+    int Plant;
     int MonitorEvaluator;
-    int specialist;
-    int shaper;
-    int implementer;
+    int Specialist;
+    int Shaper;
+    int Implementer;
     int CompleterFinisher;
-    int coordinator;
-    int teamworker;
+    int Coordinator;
+    int Teamworker;
     int ResourceInvestigator;
 };
 

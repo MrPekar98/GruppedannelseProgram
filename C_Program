@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 /* Enumerations */
-enum type_t = {Type1 = 1, Type2, Type3, Type4};
-typedef enum type_t type_t;
+enum type_t = {Visionære = 1, Idealist, Dirigent, Fejlfinder};
+typedef enum type_t PersonlighedsType;
 
 /* Structs */
 /* Belbin struct */

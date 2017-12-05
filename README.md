@@ -8,6 +8,7 @@
 - Husk passende afsnit.
 - Variabler starter med småt bogstav.
 - Ord skilles med stort bogstav og ikke underscore.
+- Symbolske variabler adskilles med underscore.
 
 # Program vejledning
 

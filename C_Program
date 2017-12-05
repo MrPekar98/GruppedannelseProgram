@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 /* Enumerations */
@@ -17,6 +18,7 @@ struct BelbinTestData
     int coordinator;
     int teamworker;
     int resourceInvestigator;
+    PersonType type;
 };
 
 /* Main struct: person struct */

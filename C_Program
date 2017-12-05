@@ -8,22 +8,22 @@ typedef enum type_t PersonType;
 /* Belbin struct */
 struct BelbinTestData
 {
-    int Plant;
-    int MonitorEvaluator;
-    int Specialist;
-    int Shaper;
-    int Implementer;
-    int CompleterFinisher;
-    int Coordinator;
-    int Teamworker;
-    int ResourceInvestigator;
+    int plant;
+    int monitorEvaluator;
+    int specialist;
+    int shaper;
+    int implementer;
+    int completerFinisher;
+    int coordinator;
+    int teamworker;
+    int resourceInvestigator;
 };
 
 /* Main struct: person struct */
 struct person
 {
     char *name;
-    char sex; Det vil Martin have med hjælpe læren <3
+    char sex;
     
     /* Belbin struct declaration */
     struct BelbinTestData belbin;

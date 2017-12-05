@@ -2,8 +2,9 @@
 # Skrive regler
 - 4 spaces.
 - Oneliner uden curly braces.
-- Curlybrace rykkes ned.
+- Curlybraces rykkes ned.
 - Husk masser af kommentarer på engelsk.
+- Kommentarer skal være tilføjet inden commit.
 - Husk passende afsnit.
 
 # Program vejledning

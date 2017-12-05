@@ -1,5 +1,4 @@
 #include <stdio.h>
-
 #define GROUP_MAX_SIZE 8
 
 /* Enumerations */
@@ -37,7 +36,7 @@ typedef struct person personData;
 struct group
 {
     /* Array of members */
-    personData members[GROUP__MAX_SIZE];
+    personData members[GROUP_MAX_SIZE];
 }
 typedef struct group group;
 /* Protocols */
@@ -59,6 +58,9 @@ int main()
     
     /* Data array: Containing all information about every student. */
     personData persons[amountOfStudents];
+    
+    /* Array of groups. */
+    group groups[amountOfStudents / GROUP_MAX_SIZE];
     
     return 0;
 }

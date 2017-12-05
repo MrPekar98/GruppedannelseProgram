@@ -1,12 +1,12 @@
-#include <stdio.h>
+p#include <stdio.h>
 
 /* Enumerations */
-enum type_t = {visionary = 1, idealist, dirigent, troubleshooter};
-typedef enum type_t PersonType;
+enum type_t = {visionary = 1, idealist, conductor, troubleshooter};
+typedef enum type_t personType_t;
 
 /* Structs */
 /* Belbin struct */
-struct BelbinTestData
+struct belbinTestData
 {
     int plant;
     int monitorEvaluator;
@@ -24,23 +24,23 @@ struct person
 {
     char *name;
     char sex;
-    PersonType type;
+    personType_t type;
     
     /* Belbin struct declaration */
     struct BelbinTestData belbin;
 };
-typedef struct person PersonData;
+typedef struct person personData;
 
 /* Protocols */
 
 /* Main function */
 int main()
 {
-    int AmountOfStudents, GroupSize;
+    int amountOfStudents, groupSize;
     
     printf("Amount of students: ");
-    int test = scanf("%d", &AmountOfStudents);
-    int test2 = scanf("%d", &GroupSize);
+    int test = scanf("%d", &amountOfStudents);
+    int test2 = scanf("%d", &groupSize);
     
     if (test != 1 || test2 != 1)
     {
@@ -49,7 +49,7 @@ int main()
     }
     
     /* Data array: Containing all information about every student. */
-    PersonData persons[AmountOfStudents];
+    personData persons[amountOfStudents];
     
     return 0;
 }

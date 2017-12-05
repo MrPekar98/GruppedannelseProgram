@@ -23,7 +23,7 @@ struct BelbinTestData
 struct person
 {
     char *name;
-    char sex;
+    char sex; Det vil Martin have med hjælpe læren <3
     
     /* Belbin struct declaration */
     struct BelbinTestData belbin;

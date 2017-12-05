@@ -8,6 +8,7 @@
 - Husk passende afsnit.
 - Variabler starter med småt bogstav.
 - Ord skilles med stort bogstav og ikke underscore.
+- Symbolske konstanter (definitions og const) skrives med capital letters for alle bogstaver.
 - Symbolske variabler adskilles med underscore.
 
 # Program vejledning

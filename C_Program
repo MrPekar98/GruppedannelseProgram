@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
+
 #define GROUP_MAX_SIZE 8
 
 /* Enumerations */
@@ -26,7 +28,7 @@ struct belbinTestData
 /* Main struct: person struct */
 struct person
 {
-    char *name;
+    char name[30];
     char sex;
     personType_t type;
 
@@ -68,9 +70,6 @@ int main()
     personData persons[amountOfStudents];
     PersonDataAssignment(persons, amountOfStudents);
 
-    printf("Test\n");
-    printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[0].name, persons[0].sex, persons[0].type, persons[0].belbin.plant, persons[0].belbin.monitorEvaluator, persons[0].belbin.specialist, persons[0].belbin.shaper, persons[0].belbin.implementer, persons[0].belbin.completerFinisher, persons[0].belbin.coordinator, persons[0].belbin.teamworker, persons[0].belbin.resourceInvestigator);
-
     /* Array of groups. */
     group groups[amountOfStudents / GROUP_MAX_SIZE + 1];
 
@@ -97,7 +96,7 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
             printf("No more data in textfile.\n");
             break;
         }
-        
+
         fscanf(textFile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
     }
 

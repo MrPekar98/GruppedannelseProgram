@@ -101,12 +101,13 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
     }
 
     int i = 0;
-    for (i; i < arraySize; i++)
+    while (!feof(textfile))
     {
-        if (feof(textfile))     /* End of file. */
+        if (i == arraySize)
             break;
-
+        
         fscanf(textfile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+        i++;
     }
 
     fclose(textfile);

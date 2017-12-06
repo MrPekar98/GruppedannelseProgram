@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-
 #define GROUP_MAX_SIZE 8
 
 /* Enumerations */
@@ -46,7 +45,8 @@ struct group
 typedef struct group group;
 
 /* Protocols */
-void PersonDataAssignment(personData *DataArray, int arraySize);
+int textfileRows(FILE *textfile);
+void PersonDataAssignment(FILE *textfile, personData *DataArray, int arraySize);
 
 /* Main function */
 int main()
@@ -54,21 +54,35 @@ int main()
     printf("Saved textfile must be located in the same directory as this program.\n\n");
 
     int amountOfStudents, groupSize;
+    FILE *textfile = fopen("TestResultater.txt", "r");
+    
+    if (textfile == NULL)       /* File does not exist. */
+    {
+        printf("\nTextfile does not exist.\n");
+        exit(1);
+    }
 
-    printf("Amount of students: ");
-    int test = scanf("%d", &amountOfStudents);
     printf("Group size: ");
-    int test2 = scanf("%d", &groupSize);
+    int test = scanf("%d", &groupSize);
 
-    if (test != 1 || test2 != 1)
+    if (test != 1)        /* Format exception. */
     {
         printf("\nFormat exception.\n");
         exit(1);
     }
 
-    /* Data array: Containing all information about every student. */
-    personData persons[amountOfStudents];
-    PersonDataAssignment(persons, amountOfStudents);
+    /* Data array: Containing all information about every student. 
+    personData *persons = (personData *) malloc(textfileRows(textfile));*/
+    personData *persons = (personData *) malloc(10);
+
+    if (persons == NULL)        /* Not enough memory. */
+    {
+        printf("\nNot enough space on memory.\n");
+        exit(1);
+    }
+
+    PersonDataAssignment(textfile, persons, amountOfStudents);
+    fclose(textfile);
 
     /* Array of groups. */
     group groups[amountOfStudents / GROUP_MAX_SIZE + 1];
@@ -83,22 +97,24 @@ int main()
     return 0;
 }
 
-/* Assigning data to main array containing all student. */
-void PersonDataAssignment(personData *DataArray, int arraySize)
+/* Size of array = rows in textfile. */
+int textfileRows(FILE *textfile)
 {
-    FILE *textFile = fopen("TestResultater.txt", "r");
+    int i = 0;
+    while (!feof(textfile))
+    {
+        i++;
+    }
 
+    return i;
+}
+
+/* Assigning data to main array containing all student. */
+void PersonDataAssignment(FILE *textfile, personData *DataArray, int arraySize)
+{
     int i = 0;
     for (i; i < arraySize; i++)
     {
-        if (feof(textFile))
-        {
-            printf("\n\nNo more data in textfile.\n");
-            break;
-        }
-
-        fscanf(textFile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+        fscanf(textfile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
     }
-
-    fclose(textFile);
 }

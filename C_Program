@@ -29,7 +29,7 @@ struct person
     char *name;
     char sex;
     personType_t type;
-    
+
     /* Belbin struct declaration */
     struct belbinTestData belbin;
 };
@@ -44,33 +44,33 @@ struct group
 typedef struct group group;
 
 /* Protocols */
-void PersonDataAssignment(personData *DataArray);
+void PersonDataAssignment(personData *DataArray, int arraySize);
 
 /* Main function */
 int main()
 {
     printf("Saved textfile must be located in the same directory as this program.\n\n");
-    
+
     int amountOfStudents, groupSize;
-    
+
     printf("Amount of students: ");
     int test = scanf("%d", &amountOfStudents);
     printf("Group size: ");
     int test2 = scanf("%d", &groupSize);
-    
+
     if (test != 1 || test2 != 1)
     {
         printf("\nFormat exception.\n");
         exit(1);
     }
-    
+
     /* Data array: Containing all information about every student. */
     personData persons[amountOfStudents];
-    PersonDataAssignment(persons);
+    PersonDataAssignment(persons, amountOfStudents);
 
     printf("Test\n");
-    printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[0].name, persons[0].sex, persons[0].type, persons[0].belbin.plant, persons[0].belbin.monitorEvaluator, persons[0].belbin.specialist, persons[0].shaper, persons[0].belbin.implementer persons[0].belbin.completerFinisher, persons[0].belbin.coordinator, persons[0].belbin.teamworker, persons[0].belbin.resourceInvestigator);
-    
+    printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[0].name, persons[0].sex, persons[0].type, persons[0].belbin.plant, persons[0].belbin.monitorEvaluator, persons[0].belbin.specialist, persons[0].belbin.shaper, persons[0].belbin.implementer, persons[0].belbin.completerFinisher, persons[0].belbin.coordinator, persons[0].belbin.teamworker, persons[0].belbin.resourceInvestigator);
+
     /* Array of groups. */
     group groups[amountOfStudents / GROUP_MAX_SIZE + 1];
 
@@ -78,21 +78,21 @@ int main()
     int i;
     for (i = 0; i < amountOfStudents; i++)
     {
-        printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].shaper, persons[i].belbin.implementer persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
+        printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
     }
-    
+
     return 0;
 }
 
 /* Assigning data to main array containing all student. */
-void PersonDataAssignment(personData *DataArray)
+void PersonDataAssignment(personData *DataArray, int arraySize)
 {
-    FILE textFile = fopen("TestResultater.txt", "r")
+    FILE *textFile = fopen("TestResultater.txt", "r");
 
     int i = 0;
-    while (!feof(textFile))
+    for (i; i < arraySize; i++)
     {
-        fscanf(textFile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].shaper, &DataArray[i].belbin.implementer &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+        fscanf(textFile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
 
         i++;
     }

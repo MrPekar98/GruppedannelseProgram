@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <ctype.h>
 #include <string.h>
 
 #define GROUP_MAX_SIZE 8
@@ -93,7 +93,7 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
     {
         if (feof(textFile))
         {
-            printf("No more data in textfile.\n");
+            printf("\n\nNo more data in textfile.\n");
             break;
         }
 

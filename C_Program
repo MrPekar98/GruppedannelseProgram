@@ -76,7 +76,7 @@ int main()
 
     /* Test */
     int i;
-    for (i = 0; i < amountOfStudents; i++)
+    for (i = 0; i < amountOfStudents - 1; i++)
     {
         printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
     }
@@ -92,9 +92,13 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
     int i = 0;
     for (i; i < arraySize; i++)
     {
+        if (feof(textFile))
+        {
+            printf("No more data in textfile.\n");
+            break;
+        }
+        
         fscanf(textFile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
-
-        i++;
     }
 
     fclose(textFile);

@@ -3,7 +3,7 @@
 #define GROUP_MAX_SIZE 8
 
 /* Enumerations */
-enum type_t = {visionary = 1, idealist, conductor, troubleshooter};
+enum type_t {visionary = 1, idealist, conductor, troubleshooter};
 typedef enum type_t personType_t;
 
 /* Structs */
@@ -21,6 +21,7 @@ struct belbinTestData
     int resourceInvestigator;
 };
 
+/* Structs */
 /* Main struct: person struct */
 struct person
 {
@@ -29,7 +30,7 @@ struct person
     personType_t type;
     
     /* Belbin struct declaration */
-    struct BelbinTestData belbin;
+    struct belbinTestData belbin;
 };
 typedef struct person personData;
 
@@ -38,30 +39,62 @@ struct group
 {
     /* Array of members */
     personData members[GROUP_MAX_SIZE];
-}
+};
 typedef struct group group;
+
 /* Protocols */
+void PersonDataAssignment(personData *DataArray);
 
 /* Main function */
 int main()
 {
+    printf("Saved textfile must be located in the same directory as this program.\n\n");
+    
     int amountOfStudents, groupSize;
     
     printf("Amount of students: ");
     int test = scanf("%d", &amountOfStudents);
+    printf("Group size: ");
     int test2 = scanf("%d", &groupSize);
     
     if (test != 1 || test2 != 1)
     {
-        printf("Format exception.\n");
-        exit(EXIT_FAILURE);
+        printf("\nFormat exception.\n");
+        exit(1);
     }
     
     /* Data array: Containing all information about every student. */
     personData persons[amountOfStudents];
+    PersonDataAssignment(persons);
+
+    printf("Test\n");
+    printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", DataArray[0].name, DataArray[0].sex, DataArray[0].type, DataArray[0].belbin.plant, DataArray[0].belbin.monitorEvaluator, DataArray[0].belbin.specialist, DataArray[0].shaper, DataArray[0].belbin.implementer DataArray[0].belbin.completerFinisher, DataArray[0].belbin.coordinator, DataArray[0].belbin.teamworker, DataArray[0].belbin.resourceInvestigator);
     
     /* Array of groups. */
-    group groups[ceil(amountOfStudents / GROUP_MAX_SIZE)];
+    group groups[amountOfStudents / GROUP_MAX_SIZE + 1];
+
+    /* Test */
+    int i;
+    for (i = 0; i < amountOfStudents; i++)
+    {
+        printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", DataArray[i].name, DataArray[i].sex, DataArray[i].type, DataArray[i].belbin.plant, DataArray[i].belbin.monitorEvaluator, DataArray[i].belbin.specialist, DataArray[i].shaper, DataArray[i].belbin.implementer DataArray[i].belbin.completerFinisher, DataArray[i].belbin.coordinator, DataArray[i].belbin.teamworker, DataArray[i].belbin.resourceInvestigator);
+    }
     
     return 0;
+}
+
+/* Assigning data to main array containing all student. */
+void PersonDataAssignment(personData *DataArray)
+{
+    FILE textFile = fopen("TestResultater.txt", "r")
+
+    int i = 0;
+    while (!feof(textFile))
+    {
+        fscanf(textFile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].shaper, &DataArray[i].belbin.implementer &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+
+        i++;
+    }
+
+    fclose(textFile);
 }

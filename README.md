@@ -37,6 +37,9 @@ struct BelbinTestResult:
 
 # Main
 enum PersonalityTypes {Type1 = 1, Type2, Type3, Type4};
+
 int amountOfStudents, groupSize;
+
 personData persons[amountOfStudents];
+
 group groups[amountOfStudents / GROUP_MAX_SIZE + 1]; (GROUP_MAX_SIZE = 6)

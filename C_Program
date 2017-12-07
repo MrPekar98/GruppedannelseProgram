@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#define GROUP_MAX_SIZE 8
+#define GROUP_MAX_SIZE 6
 
 /* Enumerations */
 enum type_t {visionary = 1, idealist, conductor, troubleshooter};
@@ -52,14 +52,12 @@ int main()
 {
     printf("Saved textfile must be located in the same directory as this program.\n\n");
 
-    int amountOfStudents, groupSize;
+    int amountOfStudents;
 
     printf("Amount of students: ");
     int test = scanf("%d", &amountOfStudents);
-    printf("Group size: ");
-    int test2 = scanf("%d", &groupSize);
 
-    if (test != 1 || test2 != 1)        /* Format exception. */
+    if (test != 1)        /* Format exception. */
     {
         printf("\nFormat exception.\n");
         exit(1);
@@ -83,7 +81,7 @@ int main()
     int i;
     for (i = 0; i < amountOfStudents - 1; i++)
     {
-        printf("%s %c %d %d %d %d %d %d %d %d %d %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
+        printf("%s\t\t %c\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
     }
 
     return 0;
@@ -94,20 +92,16 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
 {
     FILE *textfile = fopen("TestResultater.txt", "r");
 
-    if (textfile == NULL)       /* File does not exist or not enough memory. */
+    if (textfile == NULL)       /* If file does not exist. */
     {
-        printf("\nFile does not exist or is placed in wrong directory.\n");
+        printf("\nFile does not exist in this directory.\n");
         exit(1);
     }
 
-    int i = 0;
-    while (!feof(textfile))
+    int i;
+    for (i = 0; i < arraySize; i++)
     {
-        if (i == arraySize)
-            break;
-        
         fscanf(textfile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
-        i++;
     }
 
     fclose(textfile);

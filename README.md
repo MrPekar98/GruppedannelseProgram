@@ -13,6 +13,7 @@
 
 # Program vejledning
 
+
 # Program struktur
 Input parametre:
 - Antal studerende.
@@ -35,4 +36,7 @@ struct BelbinTestResult:
 - int ResourceInvestigator.
 
 # Main
-enum PersonalityTypes = {Type1 = 1, Type2, Type3, Type4};
+enum PersonalityTypes {Type1 = 1, Type2, Type3, Type4};
+int amountOfStudents, groupSize;
+personData persons[amountOfStudents];
+group groups[amountOfStudents / GROUP_MAX_SIZE + 1]; (GROUP_MAX_SIZE = 6)

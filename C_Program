@@ -92,7 +92,7 @@ int main()
     int i;
     for (i = 0; i < amountOfStudents - 1; i++)
     {
-        printf("%s\t\t %c\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
+        printf("%s     %c\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n", persons[i].name, persons[i].sex, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
     }
 
     return 0;

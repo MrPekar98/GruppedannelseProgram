@@ -41,6 +41,17 @@ struct group
 {
     /* Array of members */
     personData members[GROUP_MAX_SIZE];
+
+    /* Average values */
+    int averagePlant;
+    int averageMonitorEvaluator;
+    int averageSpecialist;
+    int averageShaper;
+    int averageImplementer;
+    int averageCompleterFinisher;
+    int averageCoordinator;
+    int averageTeamworker;
+    int averageResourceInvestigator;
 };
 typedef struct group group;
 
@@ -75,7 +86,7 @@ int main()
     PersonDataAssignment(persons, amountOfStudents);
 
     /* Array of groups. */
-    group groups[amountOfStudents / GROUP_MAX_SIZE + 1];
+    group groups[amountOfStudents / GROUP_MAX_SIZE];
 
     /* Test */
     int i;

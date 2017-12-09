@@ -92,7 +92,7 @@ int main()
     int i;
     for (i = 0; i < amountOfStudents; i++)
     {
-        printf("%s     %c\t %s\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n", persons[i].name, persons[i].sex, (persons[i].type == 1) ? "Visionary" : (persons[i].type == 2) ? "Idealis" : (persons[i].type == 3) ? "Conductor" : "Troubleshooter", persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
+        printf("%s     %c\t %s\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n", persons[i].name, persons[i].sex, (persons[i].type == 1) ? "Visionary" : (persons[i].type == 2) ? "Idealist" : (persons[i].type == 3) ? "Conductor" : "Troubleshooter", persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
     }
 
     return 0;

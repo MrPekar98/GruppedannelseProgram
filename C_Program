@@ -55,6 +55,13 @@ struct group
 };
 typedef struct group group;
 
+struct matrix
+{
+    int value;
+    char mark;
+};
+typedef struct matrix matrix
+
 /* Protocols */
 void PersonDataAssignment(personData *DataArray, int arraySize);
 

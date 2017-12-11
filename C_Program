@@ -62,7 +62,9 @@ struct matrix
 typedef struct matrix matrix;
 
 /* Protocols */
-void PersonDataAssignment(personData *DataArray, int arraySize);
+void personDataAssignment(personData *DataArray, int arraySize);
+void createGroups(group *groups);
+int groupsSize(personData *groupMembers);
 
 /* Main function */
 int main()
@@ -89,7 +91,7 @@ int main()
         exit(1);
     }
 
-    PersonDataAssignment(persons, amountOfStudents);
+    personDataAssignment(persons, amountOfStudents);
 
     /* Array of groups. */
     group groups[amountOfStudents / GROUP_MAX_SIZE];
@@ -98,7 +100,7 @@ int main()
 }
 
 /* Assigning data to main array containing all student. */
-void PersonDataAssignment(personData *DataArray, int arraySize)
+void personDataAssignment(personData *DataArray, int arraySize)
 {
     FILE *textfile = fopen("TestResultater.txt", "r");
 
@@ -115,4 +117,22 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
     }
 
     fclose(textfile);
+}
+
+/* Main function for creating groups. */
+void createGroups(group *groups)
+{
+
+}
+
+/* Returns size of a group. */
+int groupsSize(personData *groupMembers)
+{
+    int i = 0;
+    while (groupMembers[i].type == 1 || groupMembers[i].type == 2 || groupMembers[i].type == 3 || groupMembers[i].type == 4)
+    {
+        i++;
+    }
+
+    return i;
 }

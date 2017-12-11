@@ -63,7 +63,11 @@ typedef struct matrix matrix;
 
 /* Protocols */
 void personDataAssignment(personData *DataArray, int arraySize);
-void createGroups(group *groups);
+void createGroups(group *groups, int amountOfGroups);
+void averageBelbinValues(group *belbinGroup, int groupSize);
+int plantAverageValue(group *belbinGroup, int groupSize);
+int monitorEvaluatorAverageValue(group belbinGroup, int groupSize);
+
 int groupsSize(personData *groupMembers);
 
 /* Main function */
@@ -120,9 +124,41 @@ void personDataAssignment(personData *DataArray, int arraySize)
 }
 
 /* Main function for creating groups. */
-void createGroups(group *groups)
+void createGroups(group *groups, int amountOfGroups)
 {
+    /* Matrix */
+    matrix matrixArray[amountOfGroups][amountOfGroups];
+}
 
+/* Average Belbin values for a group. */
+void averageBelbinValues(group *belbinGroup, int groupSize)
+{
+    (*belbinGroup).averagePlant = plantAverageValue(*belbinGroup, groupSize);
+    (*belbinGroup).averageMonitorEvaluator = monitorEvaluatorAverageValue(*belbinGroup, groupSize);
+}
+
+/* Average group value for plant. */
+int plantAverageValue(group belbinGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += belbinGroup.members[i].belbin.plant;
+    }
+
+    return sum / groupSize;
+}
+
+/* Average group value for monitor evaluator. */
+int monitorEvaluatorAverageValue(group belbinGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += belbinGroup.members[i].belbin.monitorEvaluator;
+    }
+
+    return sum / groupSize;
 }
 
 /* Returns size of a group. */

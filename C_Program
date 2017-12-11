@@ -28,7 +28,6 @@ struct belbinTestData
 struct person
 {
     char name[30];
-    char sex;
     personType_t type;
 
     /* Belbin struct declaration */
@@ -60,7 +59,7 @@ struct matrix
     int value;
     char mark;
 };
-typedef struct matrix matrix
+typedef struct matrix matrix;
 
 /* Protocols */
 void PersonDataAssignment(personData *DataArray, int arraySize);
@@ -82,7 +81,7 @@ int main()
     }
 
     /* Data array: Containing all information about every student. */
-    personData *persons = (personData *) malloc(amountOfStudents);
+    personData *persons = (personData *) malloc(amountOfStudents * sizeof(personData));
 
     if (persons == NULL)        /* Not enough memory. */
     {
@@ -94,13 +93,6 @@ int main()
 
     /* Array of groups. */
     group groups[amountOfStudents / GROUP_MAX_SIZE];
-
-    /* Test */
-    int i;
-    for (i = 0; i < amountOfStudents; i++)
-    {
-        printf("%s     %c\t %s\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\t %d\n", persons[i].name, persons[i].sex, (persons[i].type == 1) ? "Visionary" : (persons[i].type == 2) ? "Idealist" : (persons[i].type == 3) ? "Conductor" : "Troubleshooter", persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
-    }
 
     return 0;
 }
@@ -119,7 +111,7 @@ void PersonDataAssignment(personData *DataArray, int arraySize)
     int i;
     for (i = 0; i < arraySize; i++)
     {
-        fscanf(textfile, "%s %c %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].sex, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+        fscanf(textfile, "%s %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
     }
 
     fclose(textfile);

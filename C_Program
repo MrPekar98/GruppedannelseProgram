@@ -69,6 +69,7 @@ int groupSize(personData *groupMembers);
 void assignFirstRound(personData *persons, group *groups, int amountOfGroups);
 void averageBelbinTypeAssignment(group *theGroup);
 void plantAverageAssign(group *theGroup, int groupSize);
+void monitiorEvaluatorAverageAssign(group *theGroup, int groupSize);
 
 /* Main function */
 int main()
@@ -170,6 +171,7 @@ void assignFirstRound(personData *persons, group *groups, int amountOfGroups)
 void averageBelbinTypeAssignment(group *theGroup)
 {
     plantAverageAssign(theGroup, groupSize((*theGroup).members));
+    monitiorEvaluatorAverageAssign(theGroup, groupSize((*theGroup).members));
 }
 
 /* Average value for plant type. */
@@ -182,4 +184,16 @@ void plantAverageAssign(group *theGroup, int groupSize)
     }
     
     (*theGroup).averagePlant = sum / groupSize;
+}
+
+/* Average value for plant type. */
+void monitiorEvaluatorAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.monitorEvaluator;
+    }
+    
+    (*theGroup).averageMonitorEvaluator = sum / groupSize;
 }

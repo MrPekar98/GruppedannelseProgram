@@ -4,10 +4,9 @@
 #include <string.h>
 #define GROUP_MAX_SIZE 6
 
-/* Enumerations 
+/* Enumerations */
 enum type_t {visionary = 1, idealist, conductor, troubleshooter};
 typedef enum type_t personType_t;
-*/
 
 /* Structs */
 /* Belbin struct */

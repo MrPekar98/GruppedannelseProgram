@@ -4,9 +4,10 @@
 #include <string.h>
 #define GROUP_MAX_SIZE 6
 
-/* Enumerations */
+/* Enumerations 
 enum type_t {visionary = 1, idealist, conductor, troubleshooter};
 typedef enum type_t personType_t;
+*/
 
 /* Structs */
 /* Belbin struct */
@@ -65,7 +66,6 @@ typedef struct matrix matrix;
 /* Protocols */
 int numberOfLines(FILE *f);
 void personDataAssignment(FILE *file, personData *DataArray, int arraySize);
-void createGroups(group *groups, int amountOfGroups, int amountOfPersons);
 int groupSize(personData *groupMembers);
 void assignFirstRound(personData *persons, group *groups, int amountOfGroups);
 void averageBelbinTypeAssignment(group *theGroup);
@@ -73,6 +73,13 @@ void plantAverageAssign(group *theGroup, int groupSize);
 void monitiorEvaluatorAverageAssign(group *theGroup, int groupSize);
 void specialistAverageAssign(group *theGroup, int groupSize);
 void shaperAverageAssign(group *theGroup, int groupSize);
+void implementerAverageAssign(group *theGroup, int groupSize);
+void completerFinisherAverageAssign(group *theGroup, int groupSize);
+void coordinatorAverageAssign(group *theGroup, int groupSize);
+void teamworkerAverageAssign(group *theGroup, int groupSize);
+void resourceInvestigatorAverageAssign(group *theGroup, int groupSize);
+int calValue(personData person, group g);
+void matrixGroups(group *groups, int amountOfGroups, int amountOfPersons);
 
 /* Main function */
 int main()
@@ -86,7 +93,7 @@ int main()
         printf("\nFile does not exist.\n");
     }
 
-    int amountOfStudents = numberOfLines(file);
+    const int amountOfStudents = numberOfLines(file);
     const int amountOfGroups = amountOfStudents / GROUP_MAX_SIZE;
 
     /* Data array: Containing all information about every student. */
@@ -102,9 +109,10 @@ int main()
 
     /* Array of groups. */
     group groups[amountOfGroups];
-    createGroups(groups, amountOfGroups, amountOfStudents);
     
+    /* Algorithm */
     assignFirstRound(persons, groups, amountOfGroups);
+    matrixGroups(groups, amountOfGroups, amountOfStudents);
     
     fclose(file);
     
@@ -133,18 +141,6 @@ void personDataAssignment(FILE *file, personData *DataArray, int arraySize)
     for (i = 0; i < arraySize; i++)
     {
         fscanf(file, "%s %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
-    }
-}
-
-/* Main function for creating groups. */
-void createGroups(group *groups, int amountOfGroups, int amountOfPersons)
-{
-    /* Matrix */
-    matrix matrixArray[amountOfGroups][amountOfGroups];
-    int i, j, place = 0;
-    for (i = 0; i < amountOfPersons; i++)
-    {
-        
     }
 }
 
@@ -181,6 +177,11 @@ void averageBelbinTypeAssignment(group *theGroup)
     monitiorEvaluatorAverageAssign(theGroup, groupSize((*theGroup).members));
     specialistAverageAssign(theGroup, groupSize((*theGroup).members));
     shaperAverageAssign(theGroup, groupSize((*theGroup).members));
+    implementerAverageAssign(theGroup, groupSize((*theGroup).members));
+    completerFinisherAverageAssign(theGroup, groupSize((*theGroup).members));
+    coordinatorAverageAssign(theGroup, groupSize((*theGroup).members));
+    teamworkerAverageAssign(theGroup, groupSize((*theGroup).members));
+    resourceInvestigatorAverageAssign(theGroup, groupSize((*theGroup).members));
 }
 
 /* Average value for plant type. */
@@ -229,4 +230,94 @@ void shaperAverageAssign(group *theGroup, int groupSize)
     }
     
     (*theGroup).averageShaper = sum / groupSize;
+}
+
+/* Average value for implementer type. */
+void implementerAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.implementer;
+    }
+    
+    (*theGroup).averageImplementer= sum / groupSize;
+}
+
+/* Average value for completer finisher type. */
+void completerFinisherAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.completerFinisher;
+    }
+    
+    (*theGroup).averageCompleterFinisher= sum / groupSize;
+}
+
+/* Average value for coordinator type. */
+void coordinatorAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.coordinator;
+    }
+    
+    (*theGroup).averageCoordinator= sum / groupSize;
+}
+
+/* Average value for teamworker type. */
+void teamworkerAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.teamworker;
+    }
+    
+    (*theGroup).averageTeamworker= sum / groupSize;
+}
+
+/* Average value for resource investigator type. */
+void resourceInvestigatorAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.resourceInvestigator;
+    }
+    
+    (*theGroup).averageResourceInvestigator= sum / groupSize;
+}
+
+/* Calculates the combines differences of one person and one group */
+int calValue(personData person, group g)
+{
+    int value = 0;
+
+    value = abs(person.belbin.plant - g.averagePlant) +
+            abs(person.belbin.monitorEvaluator - g.averageMonitorEvaluator) +
+            abs(person.belbin.specialist - g.averageSpecialist) +
+            abs(person.belbin.shaper - g.averageShaper) +
+            abs(person.belbin.implementer - g.averageImplementer) +
+            abs(person.belbin.completerFinisher - g.averageCompleterFinisher) +
+            abs(person.belbin.coordinator - g.averageCoordinator) +
+            abs(person.belbin.teamworker - g.averageTeamworker) +
+            abs(person.belbin.resourceInvestigator - g.averageResourceInvestigator);
+
+    return value;
+}
+
+/* Main function for creating groups. */
+void matrixGroups(group *groups, int amountOfGroups, int amountOfPersons)
+{
+    /* Matrix */
+    matrix matrixArray[amountOfGroups][amountOfGroups];
+    int i, j, place = 0;
+    for (i = 0; i < amountOfPersons; i++)
+    {
+        
+    }
 }

@@ -64,10 +64,6 @@ typedef struct matrix matrix;
 /* Protocols */
 void personDataAssignment(personData *DataArray, int arraySize);
 void createGroups(group *groups, int amountOfGroups, int amountOfPersons);
-void averageBelbinValues(group *belbinGroup, int groupSize);
-int plantAverageValue(group *belbinGroup, int groupSize);
-int monitorEvaluatorAverageValue(group belbinGroup, int groupSize);
-
 int groupSize(personData *groupMembers);
 
 /* Main function */

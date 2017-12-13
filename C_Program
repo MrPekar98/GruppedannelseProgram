@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <ctype.h>
 #include <string.h>
+#include <math.h>
 #define GROUP_MAX_SIZE 6
 
 /* Enumerations */
@@ -78,7 +80,7 @@ void coordinatorAverageAssign(group *theGroup, int groupSize);
 void teamworkerAverageAssign(group *theGroup, int groupSize);
 void resourceInvestigatorAverageAssign(group *theGroup, int groupSize);
 int calValue(personData person, group g);
-void matrixGroups(group *groups, int amountOfGroups, int amountOfPersons);
+void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons);
 
 /* Main function */
 int main()
@@ -107,15 +109,22 @@ int main()
     personDataAssignment(file, persons, amountOfStudents);
 
     /* Array of groups. */
-    group groups[amountOfGroups];
+    group *groups = (group *) malloc(sizeof(group) * amountOfGroups);
+    assert(groups != NULL);
     
     /* Algorithm */
     assignFirstRound(persons, groups, amountOfGroups);
-    matrixGroups(groups, amountOfGroups, amountOfStudents);
+    matrixGroups(groups, persons, amountOfGroups, amountOfStudents);
     
     fclose(file);
+    free(persons);
     
-    /* Test */
+    /* Test 
+    int b;
+    for (b = 0; b < 99; b++)
+    {
+        printf("%d %d %d %d %d\n", persons[b].belbin.plant, persons[b].belbin.monitorEvaluator, persons[b].belbin.coordinator, persons[b].belbin.shaper, persons[b].belbin.specialist);
+    }*/
 
     return 0;
 }
@@ -129,7 +138,8 @@ int numberOfLines(FILE *f)
         fscanf(f, "%*[^\n] \n");
         i++;
     }
-
+    
+    fseek(f, 0, SEEK_SET);       /* Placing cursing back in the beginning. */
     return i;
 }
 
@@ -139,7 +149,7 @@ void personDataAssignment(FILE *file, personData *DataArray, int arraySize)
     int i;
     for (i = 0; i < arraySize; i++)
     {
-        fscanf(file, "%s %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+        fscanf(file, "%s %u %d %d %d %d %d %d %d %d %d ", DataArray[i].name, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
     }
 }
 
@@ -147,7 +157,7 @@ void personDataAssignment(FILE *file, personData *DataArray, int arraySize)
 int groupSize(personData *groupMembers)
 {
     int i = 0;
-    for (i; i < GROUP_MAX_SIZE; i++)
+    for (;i < GROUP_MAX_SIZE; i++)
     {
         if (groupMembers[i].type != 1 && groupMembers[i].type != 2 && groupMembers[i].type != 3 && groupMembers[i].type != 4)
         {
@@ -187,7 +197,7 @@ void averageBelbinTypeAssignment(group *theGroup)
 void plantAverageAssign(group *theGroup, int groupSize)
 {
     int i = 0, sum = 0;
-    for (i;  i < groupSize; i++)
+    for (;i < groupSize; i++)
     {
         sum += (*theGroup).members[i].belbin.plant;
     }
@@ -294,9 +304,7 @@ void resourceInvestigatorAverageAssign(group *theGroup, int groupSize)
 /* Calculates the combines differences of one person and one group */
 int calValue(personData person, group g)
 {
-    int value = 0;
-
-    value = abs(person.belbin.plant - g.averagePlant) +
+    int value = abs(person.belbin.plant - g.averagePlant) +
             abs(person.belbin.monitorEvaluator - g.averageMonitorEvaluator) +
             abs(person.belbin.specialist - g.averageSpecialist) +
             abs(person.belbin.shaper - g.averageShaper) +
@@ -309,14 +317,29 @@ int calValue(personData person, group g)
     return value;
 }
 
-/* Main function for creating groups. */
-void matrixGroups(group *groups, int amountOfGroups, int amountOfPersons)
+/* Main function for creating groups. Argument groups is an array. */
+void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons)
 {
+    int i;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        averageBelbinTypeAssignment(&groups[i]);
+    }
+    
     /* Matrix */
     matrix matrixArray[amountOfGroups][amountOfGroups];
-    int i, j, place = 0;
-    for (i = 0; i < amountOfPersons; i++)
+    
+    int row, column, personCounter = 0;
+    for (row = 0; row < amountOfGroups; row++)
     {
-        
+        for (column = 0; column < amountOfGroups; column++)
+        {
+            matrixArray[row][column].value = calValue(persons[row + amountOfGroups * personCounter], groups[column]);
+        }
     }
+    
+    personCounter++;
+    
+    /* Hungarian algorithm. */
+    
 }

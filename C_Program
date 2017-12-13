@@ -104,11 +104,6 @@ int main()
     assignFirstRound(persons, groups, amountOfGroups);
     
     /* Test */
-    int i;
-    for (i = 0; i < amountOfGroups; i++)
-    {
-        printf("%s\n", groups[i].members[0].name);
-    }
 
     return 0;
 }

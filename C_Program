@@ -63,30 +63,31 @@ struct matrix
 typedef struct matrix matrix;
 
 /* Protocols */
-void personDataAssignment(personData *DataArray, int arraySize);
+int numberOfLines(FILE *f);
+void personDataAssignment(FILE *file, personData *DataArray, int arraySize);
 void createGroups(group *groups, int amountOfGroups, int amountOfPersons);
 int groupSize(personData *groupMembers);
 void assignFirstRound(personData *persons, group *groups, int amountOfGroups);
 void averageBelbinTypeAssignment(group *theGroup);
 void plantAverageAssign(group *theGroup, int groupSize);
 void monitiorEvaluatorAverageAssign(group *theGroup, int groupSize);
+void specialistAverageAssign(group *theGroup, int groupSize);
+void shaperAverageAssign(group *theGroup, int groupSize);
 
 /* Main function */
 int main()
 {
     printf("Saved textfile must be located in the same directory as this program.\n\n");
-
-    int amountOfStudents;
-
-    printf("Amount of students: ");
-    int test = scanf("%d", &amountOfStudents);
-    const int amountOfGroups = amountOfStudents / GROUP_MAX_SIZE;
-
-    if (test != 1)        /* Format exception. */
+    
+    FILE *file = fopen("TestResultater.txt", "r");
+    
+    if (file == NULL)              /* File does not exist. */
     {
-        printf("\nFormat exception.\n");
-        exit(1);
+        printf("\nFile does not exist.\n");
     }
+
+    int amountOfStudents = numberOfLines(file);
+    const int amountOfGroups = amountOfStudents / GROUP_MAX_SIZE;
 
     /* Data array: Containing all information about every student. */
     personData *persons = (personData *) malloc(amountOfStudents * sizeof(personData));
@@ -97,7 +98,7 @@ int main()
         exit(1);
     }
 
-    personDataAssignment(persons, amountOfStudents);
+    personDataAssignment(file, persons, amountOfStudents);
 
     /* Array of groups. */
     group groups[amountOfGroups];
@@ -105,29 +106,34 @@ int main()
     
     assignFirstRound(persons, groups, amountOfGroups);
     
+    fclose(file);
+    
     /* Test */
 
     return 0;
 }
 
-/* Assigning data to main array containing all student. */
-void personDataAssignment(personData *DataArray, int arraySize)
+/* Returns number of lines in a file by scanning until each newline */
+int numberOfLines(FILE *f)
 {
-    FILE *textfile = fopen("TestResultater.txt", "r");
-
-    if (textfile == NULL)       /* If textfile doesn't exist. */
+    int i = 0;
+    while(!feof(f))
     {
-        printf("\nFile does not eixts.\n");
-        exit(1);
+        fscanf(f, "%*[^\n] \n");
+        i++;
     }
 
+    return i;
+}
+
+/* Assigning data to main array containing all student. */
+void personDataAssignment(FILE *file, personData *DataArray, int arraySize)
+{
     int i;
     for (i = 0; i < arraySize; i++)
     {
-        fscanf(textfile, "%s %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
+        fscanf(file, "%s %d %d %d %d %d %d %d %d %d %d", DataArray[i].name, &DataArray[i].type, &DataArray[i].belbin.plant, &DataArray[i].belbin.monitorEvaluator, &DataArray[i].belbin.specialist, &DataArray[i].belbin.shaper, &DataArray[i].belbin.implementer, &DataArray[i].belbin.completerFinisher, &DataArray[i].belbin.coordinator, &DataArray[i].belbin.teamworker, &DataArray[i].belbin.resourceInvestigator);
     }
-
-    fclose(textfile);
 }
 
 /* Main function for creating groups. */
@@ -168,10 +174,13 @@ void assignFirstRound(personData *persons, group *groups, int amountOfGroups)
 }
 
 /* Assigning average values for each Belbin type in a group. */
+/* Enter the group array as argument. For example: averageBelbinTypeAssignment(&groups[1]);. */
 void averageBelbinTypeAssignment(group *theGroup)
 {
     plantAverageAssign(theGroup, groupSize((*theGroup).members));
     monitiorEvaluatorAverageAssign(theGroup, groupSize((*theGroup).members));
+    specialistAverageAssign(theGroup, groupSize((*theGroup).members));
+    shaperAverageAssign(theGroup, groupSize((*theGroup).members));
 }
 
 /* Average value for plant type. */
@@ -186,7 +195,7 @@ void plantAverageAssign(group *theGroup, int groupSize)
     (*theGroup).averagePlant = sum / groupSize;
 }
 
-/* Average value for plant type. */
+/* Average value for monitor evaluator type. */
 void monitiorEvaluatorAverageAssign(group *theGroup, int groupSize)
 {
     int i, sum = 0;
@@ -196,4 +205,28 @@ void monitiorEvaluatorAverageAssign(group *theGroup, int groupSize)
     }
     
     (*theGroup).averageMonitorEvaluator = sum / groupSize;
+}
+
+/* Average value for specialist type. */
+void specialistAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.specialist;
+    }
+    
+    (*theGroup).averageSpecialist = sum / groupSize;
+}
+
+/* Average value for shaper type. */
+void shaperAverageAssign(group *theGroup, int groupSize)
+{
+    int i, sum = 0;
+    for (i = 0; i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.shaper;
+    }
+    
+    (*theGroup).averageShaper = sum / groupSize;
 }

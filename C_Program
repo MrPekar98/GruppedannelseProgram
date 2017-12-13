@@ -57,7 +57,8 @@ typedef struct group group;
 struct matrix
 {
     int value;
-    char mark;
+    char rowColumn;
+    char assignStage;
 };
 typedef struct matrix matrix;
 

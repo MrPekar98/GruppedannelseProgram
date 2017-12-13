@@ -65,6 +65,9 @@ typedef struct matrix matrix;
 void personDataAssignment(personData *DataArray, int arraySize);
 void createGroups(group *groups, int amountOfGroups, int amountOfPersons);
 int groupSize(personData *groupMembers);
+void assignFirstRound(personData *persons, group *groups, int amountOfGroups);
+void averageBelbinTypeAssignment(group *theGroup);
+void plantAverageAssign(group *theGroup, int groupSize);
 
 /* Main function */
 int main()
@@ -98,7 +101,14 @@ int main()
     group groups[amountOfGroups];
     createGroups(groups, amountOfGroups, amountOfStudents);
     
+    assignFirstRound(persons, groups, amountOfGroups);
+    
     /* Test */
+    int i;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        printf("%s\n", groups[i].members[0].name);
+    }
 
     return 0;
 }
@@ -148,4 +158,32 @@ int groupSize(personData *groupMembers)
     }
 
     return i;
+}
+
+/* Putting one person in each group as first round. */
+void assignFirstRound(personData *persons, group *groups, int amountOfGroups)
+{
+    int i;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        groups[i].members[0] = persons[i];
+    }
+}
+
+/* Assigning average values for each Belbin type in a group. */
+void averageBelbinTypeAssignment(group *theGroup)
+{
+    plantAverageAssign(theGroup, groupSize((*theGroup).members));
+}
+
+/* Average value for plant type. */
+void plantAverageAssign(group *theGroup, int groupSize)
+{
+    int i = 0, sum = 0;
+    for (i;  i < groupSize; i++)
+    {
+        sum += (*theGroup).members[i].belbin.plant;
+    }
+    
+    (*theGroup).averagePlant = sum / groupSize;
 }

@@ -81,6 +81,9 @@ void teamworkerAverageAssign(group *theGroup, int groupSize);
 void resourceInvestigatorAverageAssign(group *theGroup, int groupSize);
 int calValue(personData person, group g);
 void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons);
+void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups);
+int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
+void substractHighestValue(matrix **matrixArray, int amountOfGroups);
 
 /* Main function */
 int main()
@@ -335,11 +338,64 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
         for (column = 0; column < amountOfGroups; column++)
         {
             matrixArray[row][column].value = calValue(persons[row + amountOfGroups * personCounter], groups[column]);
+            printf("%d    ", matrixArray[row][column].value);
         }
+        printf("\n");
     }
     
     personCounter++;
     
     /* Hungarian algorithm. */
+    hungarianAlgorithm(matrixArray, amountOfGroups);
+}
+
+/* Hungarian algorithm */
+void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups)
+{
+    /* Step 1*/
+    substractHighestValue(matrixArray, amountOfGroups);
     
+    /* Test */
+    int a, b;
+    for (a = 0; a < amountOfGroups; a++)
+    {
+        for (b = 0; b < amountOfGroups; b++)
+        {
+            printf("%d    ", matrixArray[a][b].value);
+        }
+        
+        printf("\n");
+    }
+    
+    /* Step 2 */
+}
+
+/* Substract all values in a row with the highest value in the row. */
+int findHighestValue(matrix **matrixArray, int row, int amountOfGroups)
+{
+    int j, highestValue = 0;
+    for (j = 0; j < amountOfGroups; j++)
+    {
+        if (matrixArray[row][j].value > highestValue)
+        {
+            highestValue = matrixArray[row][j].value;
+        }
+    }
+    
+    return highestValue;
+}
+
+/* Substract highest value by highest value. */
+void substractHighestValue(matrix **matrixArray, int amountOfGroups)
+{
+    int i, j, highestValue;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        highestValue = findHighestValue(matrixArray, i, amountOfGroups);
+        
+        for (j = 0; j < amountOfGroups; j++)
+        {
+            matrixArray[i][j].value -= highestValue;
+        }
+    }
 }

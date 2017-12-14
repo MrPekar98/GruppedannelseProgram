@@ -325,7 +325,7 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
     {
         averageBelbinTypeAssignment(&groups[i]);
     }
-    
+
     /* Matrix */
     matrix matrixArray[amountOfGroups][amountOfGroups];
     

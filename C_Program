@@ -84,12 +84,12 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups);
 int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
 void substractHighestValue(matrix **matrixArray, int amountOfGroups);
+void Step1(matrix **matrixArray, int amountOfGroups);
+int isZeroInRow(matrix **matrixArray, int amountOfGroups, int row);
 
 /* Main function */
 int main()
 {
-    printf("Saved textfile must be located in the same directory as this program.\n\n");
-    
     FILE *file = fopen("TestResultater.txt", "r");
     
     if (file == NULL)              /* File does not exist. */
@@ -122,12 +122,7 @@ int main()
     fclose(file);
     free(persons);
     
-    /* Test 
-    int b;
-    for (b = 0; b < 99; b++)
-    {
-        printf("%d %d %d %d %d\n", persons[b].belbin.plant, persons[b].belbin.monitorEvaluator, persons[b].belbin.coordinator, persons[b].belbin.shaper, persons[b].belbin.specialist);
-    }*/
+    /* Test */
 
     return 0;
 }
@@ -330,7 +325,12 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
     }
 
     /* Matrix */
-    matrix matrixArray[amountOfGroups][amountOfGroups];
+    int x;
+    matrix **matrixArray = (matrix **) malloc(sizeof(matrix) * amountOfGroups);
+    for (x = 0; x < amountOfGroups; x++)
+    {
+        matrixArray[x] = (matrix *) malloc(sizeof(matrix) * amountOfGroups);
+    }
     
     int row, column, personCounter = 0;
     for (row = 0; row < amountOfGroups; row++)
@@ -338,9 +338,7 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
         for (column = 0; column < amountOfGroups; column++)
         {
             matrixArray[row][column].value = calValue(persons[row + amountOfGroups * personCounter], groups[column]);
-            printf("%d    ", matrixArray[row][column].value);
         }
-        printf("\n");
     }
     
     personCounter++;
@@ -353,19 +351,7 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups)
 {
     /* Step 1*/
-    substractHighestValue(matrixArray, amountOfGroups);
-    
-    /* Test */
-    int a, b;
-    for (a = 0; a < amountOfGroups; a++)
-    {
-        for (b = 0; b < amountOfGroups; b++)
-        {
-            printf("%d    ", matrixArray[a][b].value);
-        }
-        
-        printf("\n");
-    }
+    Step1(matrixArray, amountOfGroups);
     
     /* Step 2 */
 }
@@ -398,4 +384,10 @@ void substractHighestValue(matrix **matrixArray, int amountOfGroups)
             matrixArray[i][j].value -= highestValue;
         }
     }
+}
+
+/* Step 1 */
+void Step1(matrix **matrixArray, int amountOfGroups)
+{
+    substractHighestValue(matrixArray, amountOfGroups);
 }

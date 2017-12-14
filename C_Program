@@ -5,6 +5,7 @@
 #include <string.h>
 #include <math.h>
 #define GROUP_MAX_SIZE 6
+#define DONE 7
 
 /* Enumerations */
 enum type_t {visionary = 1, idealist, conductor, troubleshooter};
@@ -86,6 +87,11 @@ int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
 void substractHighestValue(matrix **matrixArray, int amountOfGroups);
 void Step1(matrix **matrixArray, int amountOfGroups);
 int isZeroInRow(matrix **matrixArray, int amountOfGroups, int row);
+int isZeroInColumn(matrix **matrixArray, int amountOfGroups, int column);
+void Step2(matrix **matrixArray, int amountOfGroups);
+int isDone(int *colCovered, int amountOfGroups);
+void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered);
+void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int rowCovered, int *stage);
 
 /* Main function */
 int main()
@@ -350,10 +356,40 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
 /* Hungarian algorithm */
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups)
 {
-    /* Step 1*/
-    Step1(matrixArray, amountOfGroups);
+    int stage = 1;
     
-    /* Step 2 */
+    switch (stage)
+    {
+        case 1:
+            /* Step 1*/
+            Step1(matrixArray, amountOfGroups);
+            stage++;
+            break;
+            
+        case 2:
+            /* Step 1*/
+            Step1(matrixArray, amountOfGroups);
+            stage++;
+            break;
+            
+        case 3:
+            break;
+            
+        case 4:
+            break;
+            
+        case 5:
+            break;
+            
+        case 6:
+            break;
+            
+        case DONE:
+            break;
+            
+        default:
+            break;
+    }
 }
 
 /* Substract all values in a row with the highest value in the row. */
@@ -390,4 +426,98 @@ void substractHighestValue(matrix **matrixArray, int amountOfGroups)
 void Step1(matrix **matrixArray, int amountOfGroups)
 {
     substractHighestValue(matrixArray, amountOfGroups);
+}
+
+/* Boolean checking whether there is a zero in a row. */
+int isZeroInRow(matrix **matrixArray, int amountOfGroups, int row)
+{
+    int j;
+    for (j = 0; j < amountOfGroups; j++)
+    {
+        if (matrixArray[row][j].assignStage == 'S')
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+/* Boolean checking whether there is a zero in a column. */
+int isZeroInColumn(matrix **matrixArray, int amountOfGroups, int column)
+{
+    int i;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        if (matrixArray[i][column].assignStage == 'S')
+        {
+            return 1;
+        }
+    }
+    
+    return 0;
+}
+
+/* Step 2  */
+void Step2(matrix **matrixArray, int amountOfGroups)
+{
+    int i, j;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        for (j = 0; j < amountOfGroups; j++)
+        {
+            if (matrixArray[i][j].value == 0 && !isZeroInRow(matrixArray, amountOfGroups, i) && !isZeroInColumn(matrixArray, amountOfGroups, j))
+            {
+                matrixArray[i][j].assignStage = 'S';
+            }
+        }
+    }
+}
+
+/* Returns true if all columns are marked */
+int isDone(int *colCovered, int amountOfGroups)
+{
+    int i;
+
+    for(i = 0; i < amountOfGroups; i++)
+    {
+        if(!colCovered[i])
+            return 0;
+    }
+
+    return 1;
+}
+
+/* Mark all columns with a starred zero */
+void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered)
+{
+    int column, row;
+
+    for(column = 0; column < amountOfGroups; column++)
+    {
+        for(row = 0; row < amountOfGroups; row++)
+        {
+            if(matrixArray[row][column].assignStage == 'S')
+            {
+                colCovered[column] = 1;
+                break;
+            }
+        }
+    }
+}
+
+/* Step 3 in the algorithm */
+void step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int rowCovered, int *stage)
+{
+    markColumnsWithStarredZero(matrixArray, amountOfGroups, colCovered);
+
+    if (isDone(colCovered, amountOfGroups))
+    {
+        *stage = DONE;
+    }
+    
+    else
+    {
+        *stage = 4;
+    }
 }

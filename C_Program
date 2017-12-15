@@ -82,7 +82,7 @@ void teamworkerAverageAssign(group *theGroup, int groupSize);
 void resourceInvestigatorAverageAssign(group *theGroup, int groupSize);
 int calValue(personData person, group g);
 void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons);
-void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups);
+void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered);
 int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
 void substractHighestValue(matrix **matrixArray, int amountOfGroups);
 void Step1(matrix **matrixArray, int amountOfGroups);
@@ -91,7 +91,8 @@ int isZeroInColumn(matrix **matrixArray, int amountOfGroups, int column);
 void Step2(matrix **matrixArray, int amountOfGroups);
 int isDone(int *colCovered, int amountOfGroups);
 void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered);
-void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int rowCovered, int *stage);
+void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
+void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
 
 /* Main function */
 int main()
@@ -338,6 +339,16 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
         matrixArray[x] = (matrix *) malloc(sizeof(matrix) * amountOfGroups);
     }
     
+    /* Arrays for marking rows and columns. */
+    int colCovered[amountOfGroups];
+    int rowCovered[amountOfGroups];
+    int q;
+    for (q = 0; q < amountOfGroups; q++)
+    {
+        colCovered[q] = 0;
+        rowCovered[q] = 0;
+    }
+    
     int row, column, personCounter = 0;
     for (row = 0; row < amountOfGroups; row++)
     {
@@ -350,32 +361,35 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
     personCounter++;
     
     /* Hungarian algorithm. */
-    hungarianAlgorithm(matrixArray, amountOfGroups);
+    hungarianAlgorithm(matrixArray, amountOfGroups, colCovered, rowCovered);
 }
 
 /* Hungarian algorithm */
-void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups)
+void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered)
 {
-    int stage = 1;
+    int stage = 4;
     
-    switch (stage)
+    switch (stage)         /* We need a loop to go through all steps. */
     {
         case 1:
-            /* Step 1*/
+            /* Step 1 */
             Step1(matrixArray, amountOfGroups);
             stage++;
             break;
             
         case 2:
-            /* Step 1*/
-            Step1(matrixArray, amountOfGroups);
+            /* Step 2 */
+            Step2(matrixArray, amountOfGroups);
             stage++;
             break;
             
         case 3:
+            /* Step 3 */
+            Step3(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
             break;
             
         case 4:
+            Step4(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
             break;
             
         case 5:
@@ -385,6 +399,7 @@ void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups)
             break;
             
         case DONE:
+            stage++;        /* Stage should be 8 and the while-loop will stop. */
             break;
             
         default:
@@ -392,7 +407,7 @@ void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups)
     }
 }
 
-/* Substract all values in a row with the highest value in the row. */
+/* Finds all values in a row with the highest value in the row. */
 int findHighestValue(matrix **matrixArray, int row, int amountOfGroups)
 {
     int j, highestValue = 0;
@@ -407,7 +422,7 @@ int findHighestValue(matrix **matrixArray, int row, int amountOfGroups)
     return highestValue;
 }
 
-/* Substract highest value by highest value. */
+/* Subtract all values by highest value. */
 void substractHighestValue(matrix **matrixArray, int amountOfGroups)
 {
     int i, j, highestValue;
@@ -507,7 +522,7 @@ void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *c
 }
 
 /* Step 3 in the algorithm */
-void step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int rowCovered, int *stage)
+void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
 {
     markColumnsWithStarredZero(matrixArray, amountOfGroups, colCovered);
 
@@ -520,4 +535,65 @@ void step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int rowCov
     {
         *stage = 4;
     }
+}
+
+/* Step4 */
+void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
+{
+    int row, column;
+    int largestUncoveredValue = -10000;
+
+    /* Go through all elements in the matrix and find an uncovered zero*/
+    for (row = 0; row < amountOfGroups; row++)
+    {
+        if (!rowCovered[row])          /* If the row isnt covered, then go through the columns as well */
+        {
+            for (column = 0; column < amountOfGroups; column++)
+            {
+                if (matrixArray[row][column].value == 0)
+                {
+                    matrixArray[row][column].assignStage == 'P';
+                    int i;
+                    
+                    /* Look through all elements in this row, and look for a starred zero */
+                    for (i = 0; i < amountOfGroups; i++)
+                    {
+                        /* If there is a starred zero in the same row, then mark the row, and unmark the column with the starred zero */
+                        if (matrixArray[row][column].assignStage == 'S')
+                        {
+                            rowCovered[row] = 1;
+                            colCovered[i] = 0;
+                            break;
+                        }
+
+                        /* If there is no starred zero in the same row, then go to step 5 */
+                       *stage = 5;
+                        return;
+                    }
+
+                    /* If there isnt any starred zero in this row, then go to step 5 */
+                }
+            }
+        }
+    }
+
+    /* TODO: Save the largest value of the uncovered elements*/
+    for (row = 0; row < amountOfGroups; row++)
+    {
+        if (!rowCovered[row])
+        {
+            for (column = 0; column < amountOfGroups; column++)
+            {
+                if (!colCovered[column])
+                {
+                    if (matrixArray[row][column].value > largestUncoveredValue)
+                    {
+                        largestUncoveredValue = matrixArray[row][column].value;
+                    }
+                }
+            }
+        }
+    }
+
+    *stage = 6;
 }

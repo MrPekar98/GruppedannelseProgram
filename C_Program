@@ -91,9 +91,9 @@ int isDone(int *colCovered, int amountOfGroups);
 void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered);
 void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
 void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
-void erasePrimed(matrix **matrixArray, int amountOfGroups);
-void uncoverLines(int *colCovered, int *rowCovered, int amountOfGroups);
-void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
+void clearMatrix(int **matrix, int size);
+void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage);
+void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCovered, int highestValue, int *stage);
 
 /* Main function */
 int main()
@@ -341,9 +341,8 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
     }
     
     /* Arrays for marking rows and columns. */
-    int colCovered[amountOfGroups];
-    int rowCovered[amountOfGroups];
-    uncoverLines(colCovered, rowCovered, amountOfGroups);
+    int *colCovered = (int *) calloc(amountOfGroups, sizeof(int));
+    int *rowCovered = (int *) calloc(amountOfGroups, sizeof(int));
     
     int row, column, personCounter = 0;
     for (row = 0; row < amountOfGroups; row++)
@@ -365,43 +364,41 @@ void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCover
 {
     int stage = 1;
     
-    switch (stage)         /* We need a loop to go through all steps. */
+    while (stage < 7)
     {
+        switch (stage)
+        {
         case 1:
             /* Step 1 */
             Step1(matrixArray, amountOfGroups);
+            printf("Step 1\n");
             stage++;
             break;
             
         case 2:
             /* Step 2 */
             Step2(matrixArray, amountOfGroups);
+            printf("Step 2\n");
             stage++;
             break;
             
         case 3:
             /* Step 3 */
             Step3(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
+            printf("Step 3\n");
             break;
             
         case 4:
             Step4(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
-            break;
-            
-        case 5:
-            Step5(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
-            break;
-            
-        case 6:
-            break;
-            
-        case DONE:
-            stage++;        /* Stage will be assigned 8 to end the while-loop. */
+            printf("Step 4\n");
             break;
             
         default:
             break;
+        }
     }
+    
+    printf("Done\n");
 }
 
 /* Finds all values in a row with the highest value in the row. */
@@ -537,6 +534,7 @@ void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
 /* Step 4 */
 void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
 {
+    printf("Step 4 funktion\n");
     int row, column;
     int largestUncoveredValue = -10000;
 
@@ -562,13 +560,11 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
                             colCovered[i] = 0;
                             break;
                         }
-
-                        /* If there is no starred zero in the same row, then go to step 5 */
-                       *stage = 5;
-                        return;
                     }
 
                     /* If there isnt any starred zero in this row, then go to step 5 */
+                    Step5(matrixArray, amountOfGroups, colCovered, rowCovered, row, i, stage);
+                    return;
                 }
             }
         }
@@ -592,69 +588,103 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
         }
     }
 
-    *stage = 6;
+    /* Call step 6 */
+    Step6(matrixArray, amountOfGroups, rowCovered, colCovered, largestUncoveredValue, stage);
 }
 
-/* Erases all primed */
-void erasePrimed(matrix **matrixArray, int amountOfGroups)
+/* Sets all values in array to zero. */
+void clearMatrix(int **matrix, int size)
 {
-    int row, column;
-    for (row = 0; row < amountOfGroups; row++)
+    int i, j;
+
+    for(i = 0; i < size; i++)
     {
-        for (column = 0; column < amountOfGroups; column++)
+        for(j = 0; j < size; j++)
         {
-            if (matrixArray[row][column].assignStage == 'P')
+            matrix[i][j] = 0;
+        }
+    }
+}
+
+/* Step 5 */
+void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage)
+{
+    printf("Step 5\n");
+    int row, column, x;
+
+    int **zeros = (int **)malloc(sizeof(int) * amountOfGroups);
+    for (x = 0; x < amountOfGroups; x++)
+    {
+        zeros[x] = (int *) malloc(sizeof(int) * amountOfGroups);
+    }
+
+    clearMatrix(zeros, amountOfGroups);
+
+    zeros[rowZero][colZero] = 1;           /* "1" represents a primed zero, 2 represents a starred zero */
+
+    /* Record a number of alternating starred and primed zeros */
+    while(isZeroInColumn(matrixArray, amountOfGroups, colZero))
+    {
+        for(row = 0; row < amountOfGroups; row++)
+        {
+            if(matrixArray[row][colZero].value == 0 && matrixArray[row][colZero].assignStage == 'S')
+            {
+                zeros[row][colZero] = 2;
+                for(column = 0; column < amountOfGroups; column++)
+                {
+                    if(matrixArray[row][column].value == 0 && matrixArray[row][column].assignStage == 'P')
+                    {
+                        zeros[row][column] = 1;
+                        colZero = column;
+                        rowZero = row;
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    /* Change all the recorded zeros in the matrix */
+    for(row = 0; row < amountOfGroups; row++)
+    {
+        for(column = 0; column < amountOfGroups; column++)
+        {
+            if(zeros[row][column] == 1)
+            {
+                matrixArray[row][column].assignStage = 'S';
+            }
+
+            else if(zeros[row][column] == 2)
             {
                 matrixArray[row][column].assignStage = ' ';
             }
         }
     }
+
+    *stage = 3;
 }
 
-/* Uncoveres every line in matrix. */
-void uncoverLines(int *colCovered, int *rowCovered, int amountOfGroups)
+/* Step 6 */
+void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCovered, int highestValue, int *stage)
 {
-    int i;
-    for (i = 0; i < amountOfGroups; i++)
-    {
-        colCovered[i] = 0;
-        rowCovered[i] = 0;
-    }
-}
-
-/* Step 5 */
-void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
-{
+    printf("Step 6\n");
     int row, column;
-    
-    for (column = 0; column < amountOfGroups; column++)
+    for (row = 0; row < amountOfGroups; row++)
     {
-        /* If-statement executes when there is no starred ('S') zero in the column of a primed ('P') zero. */
-        if (matrixArray[0][column].assignStage == 'P' && isZeroInColumn(matrixArray, amountOfGroups, column))
+        for (column = 0; column < amountOfGroups; column++)
         {
-            break;
-        }
-        
-        else
-        {
-            for (row = 0; row < amountOfGroups; row++)
+            if (rowCovered[row] && matrixArray[row][column].assignStage != 'S' && matrixArray[row][column].assignStage != 'P')
             {
-                /* All starred zeros will be unstarred. */
-                if (matrixArray[row][column].assignStage == 'S')
-                {
-                    matrixArray[row][column].assignStage = ' ';
-                }
-                
-                /* All primed zeros will be starred. */
-                else if (matrixArray[row][column].assignStage == 'P')
-                {
-                    matrixArray[row][column].assignStage = 'S';
-                }
+                matrixArray[row][column].value += highestValue;
+            }
+            
+            else if (!colCovered[column] && matrixArray[row][column].assignStage != 'S' && matrixArray[row][column].assignStage != 'P')
+            {
+                matrixArray[row][column].value -= highestValue;
             }
         }
     }
     
-    erasePrimed(matrixArray, amountOfGroups);
-    uncoverLines(colCovered, rowCovered, amountOfGroups);
-    *stage = 3;
+    *stage = 4;
 }

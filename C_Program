@@ -65,6 +65,7 @@ struct matrix
 typedef struct matrix matrix;
 
 /* Protocols */
+void printGroups(group *allGroups, int amountOfGroups);
 int numberOfLines(FILE *f);
 void personDataAssignment(FILE *file, personData *DataArray, int arraySize);
 int groupSize(personData *groupMembers);
@@ -80,7 +81,7 @@ void coordinatorAverageAssign(group *theGroup);
 void teamworkerAverageAssign(group *theGroup);
 void resourceInvestigatorAverageAssign(group *theGroup);
 int calValue(personData person, group g);
-void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons);
+void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons, int *personCounter);
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered);
 int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
 void substractHighestValue(matrix **matrixArray, int amountOfGroups);
@@ -98,6 +99,7 @@ void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCo
 void printMatrix(matrix **matrixarray, int amountOfGroups);
 int personCmp(const void *a, const void *b);
 void sortByPersonType(personData *array, int numberOfProfiles);
+void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int personCounter);
 
 /* Main function */
 int main()
@@ -111,6 +113,7 @@ int main()
 
     const int amountOfStudents = numberOfLines(file);
     const int amountOfGroups = amountOfStudents / GROUP_MAX_SIZE;
+    int personCounter = 1;
 
     /* Data array: Containing all information about every student. */
     personData *persons = (personData *) malloc(amountOfStudents * sizeof(personData));
@@ -130,7 +133,17 @@ int main()
 
     /* Algorithm */
     assignFirstRound(persons, groups, amountOfGroups);
-    matrixGroups(groups, persons, amountOfGroups, amountOfStudents);
+
+    int i;
+    for(i = 0; i < GROUP_MAX_SIZE - 2; i++/*i = amountOfGroups; amountOfStudents - i > amountOfGroups; i += amountOfGroups*/)
+    {
+        matrixGroups(groups, persons, amountOfGroups, amountOfStudents, &personCounter);
+    }
+    for(i = 0; i < amountOfStudents; i++)
+    {
+        printf("%s %u %d %d %d %d %d %d %d %d %d \n", persons[i].name, persons[i].type, persons[i].belbin.plant, persons[i].belbin.monitorEvaluator, persons[i].belbin.specialist, persons[i].belbin.shaper, persons[i].belbin.implementer, persons[i].belbin.completerFinisher, persons[i].belbin.coordinator, persons[i].belbin.teamworker, persons[i].belbin.resourceInvestigator);
+    }
+    printGroups(groups, amountOfGroups);
     
     fclose(file);
     free(persons);
@@ -138,6 +151,20 @@ int main()
     /* Test */
 
     return 0;
+}
+
+void printGroups(group *allGroups, int amountOfGroups)
+{
+    int i, j;
+    for(i = 0; i < amountOfGroups; i++)
+    {
+        printf("Group %d\n", i+1);
+        for(j = 0; j < allGroups[i].amountOfMembers; j++)
+        {
+            printf("%d:%s\n", j+1, allGroups[i].members[j].name);
+        }
+        printf("\n\n");
+    }
 }
 
 /* Returns number of lines in a file by scanning until each newline */
@@ -330,7 +357,7 @@ int calValue(personData person, group g)
 }
 
 /* Main function for creating groups. Argument groups is an array. */
-void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons)
+void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons, int *personCounter)
 {
     int i;
     for (i = 0; i < amountOfGroups; i++)
@@ -350,70 +377,80 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
     int *colCovered = (int *) calloc(amountOfGroups, sizeof(int));
     int *rowCovered = (int *) calloc(amountOfGroups, sizeof(int));
     
-    int row, column, personCounter = 1;
-    for (row = 0; row < amountOfGroups; row++)
+    int row, column, p = 1;
+
+    for (row = 0; row < amountOfGroups; row++, p++)
     {
         for (column = 0; column < amountOfGroups; column++)
         {
-            matrixArray[row][column].value = calValue(persons[row + amountOfGroups * personCounter], groups[column]);
+            matrixArray[row][column].value = calValue(persons[p + amountOfGroups * *personCounter], groups[column]);
         }
     }
     
-    personCounter++;
+    (*personCounter)++;
     printMatrix(matrixArray, amountOfGroups);
     
     /* Hungarian algorithm. */
     hungarianAlgorithm(matrixArray, amountOfGroups, colCovered, rowCovered);
+
+    assignGroupMembers(matrixArray, amountOfGroups, groups, persons, *personCounter);
 }
 
 /* Hungarian algorithm */
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered)
 {
     int stage = 1;
-    /*printf("step 1\n");
-    Step1(matrixArray, amountOfGroups);
-    printMatrix(matrixArray, amountOfGroups);
-    printf("Step 2\n");
-    Step2(matrixArray, amountOfGroups);
-    printf("Step 3\n");
-    Step3(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
-    printf("Step 4\n");
-    Step4(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);*/
-
 
     while (stage < 7)
     {
         switch (stage)
         {
         case 1:
-            Step1(matrixArray, amountOfGroups);
             printf("Step 1\n");
+            Step1(matrixArray, amountOfGroups);
             printMatrix(matrixArray, amountOfGroups);
             stage++;
             break;
             
         case 2:
-            Step2(matrixArray, amountOfGroups);
             printf("Step 2\n");
+            Step2(matrixArray, amountOfGroups);
             stage++;
             break;
             
         case 3:
-            Step3(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
             printf("Step 3\n");
+            Step3(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
             break;
             
         case 4:
-            Step4(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
             printf("Step 4\n");
+            Step4(matrixArray, amountOfGroups, colCovered, rowCovered, &stage);
             break;
             
         default:
             break;
         }
     }
-    
+    /* Assign group members by starred zeros */
     printf("Done\n");
+    printMatrix(matrixArray, amountOfGroups);
+}
+
+void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int personCounter)
+{
+    int row, column;
+
+    for(row = 0; row < amountOfGroups; row++)
+    {
+        for(column = 0; column < amountOfGroups; column++)
+        {
+            if(matrixArray[row][column].assignStage == 'S'){
+                allGroups[column].members[allGroups[column].amountOfMembers] = persons[row + amountOfGroups * personCounter];
+                allGroups[column].amountOfMembers++;
+            }
+        }
+    }
 }
 
 /* Finds all values in a row with the highest value in the row. */
@@ -490,7 +527,7 @@ void printMatrix(matrix **matrixArray, int amountOfGroups)
     {
         for(column = 0; column < amountOfGroups; column++)
         {
-            printf(" %d", matrixArray[row][column].value);
+            printf(" %d%s", matrixArray[row][column].value, matrixArray[row][column].assignStage == 'S' ? "*":"");
         }
         printf("\n");
     }
@@ -558,6 +595,10 @@ void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
     {
         *stage = 4;
     }
+    printf("Marked columns\n");
+    for(int i = 0; i < amountOfGroups; i++){
+        printf("Column[%d] = %d\n", i, colCovered[i]);
+    }
 }
 
 /* Step 4 */
@@ -571,12 +612,19 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
     {
         for (column = 0; column < amountOfGroups; column++)
         {
-            if (matrixArray[row][column].value == 0 && !colCovered[column])
+            if (matrixArray[row][column].value == 0 && !colCovered[column] && !rowCovered[row])
             {
                 matrixArray[row][column].assignStage = 'P';
                 int i;      /* i is used to count column */
-                printf("Zero found %d, %d\n", row, column);
+                printf("Zero found value:%d (%d, %d)\n", matrixArray[row][column].value, row, column);
                 
+                /* If there isnt any starred zero in this row, then go to step 5 */
+                if(!isZeroInRow(matrixArray, amountOfGroups, row))
+                {
+                    Step5(matrixArray, amountOfGroups, colCovered, rowCovered, row, column, stage);
+                    return;
+                }
+
                 /* Look through all elements in this row, and look for a starred zero */
                 for (i = 0; i < amountOfGroups; i++)
                 {
@@ -589,10 +637,6 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
                         break;
                     }
                 }
-
-                /* If there isnt any starred zero in this row, then go to step 5 */
-                Step5(matrixArray, amountOfGroups, colCovered, rowCovered, row, i, stage);
-                return;
             }
         }
     }
@@ -638,14 +682,23 @@ void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
 {
     printf("Step 5\n");
     int row, column, x;
-
-    int **zeros = (int **)malloc(sizeof(int) * amountOfGroups);
+    int zeros[amountOfGroups][amountOfGroups];
+    /*int **zeros = (int **)malloc(sizeof(int) * amountOfGroups);
     for (x = 0; x < amountOfGroups; x++)
     {
         zeros[x] = (int *) malloc(sizeof(int) * amountOfGroups);
-    }
+    }*/
 
-    clearMatrix(zeros, amountOfGroups);
+    /*clearMatrix(zeros, amountOfGroups);*/
+    int i, j;
+
+    for(i = 0; i < amountOfGroups; i++)
+    {
+        for(j = 0; j < amountOfGroups; j++)
+        {
+            zeros[i][j] = 0;
+        }
+    }
 
     zeros[rowZero][colZero] = 1;           /* "1" represents a primed zero, 2 represents a starred zero */
 

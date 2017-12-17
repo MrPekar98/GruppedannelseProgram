@@ -626,7 +626,6 @@ void uncoverLines(int *colCovered, int *rowCovered, int amountOfGroups)
 void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
 {
     int row, column;
-    int Z[3][2];      /* Z_0 represents the uncovered primed zero found in step 4. Z_1 denotes  the starred zero in the column of Z_0 (if any). Z_2 denotes the primed zero in the row of Z_1. */
     
     for (column = 0; column < amountOfGroups; column++)
     {

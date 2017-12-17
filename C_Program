@@ -93,7 +93,6 @@ int isDone(int *colCovered, int amountOfGroups);
 void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered);
 void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
 void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
-void clearMatrix(int **matrix, int size);
 void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage);
 void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCovered, int highestValue, int *stage);
 int personCmp(const void *a, const void *b);
@@ -633,32 +632,12 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
     Step6(matrixArray, amountOfGroups, rowCovered, colCovered, largestUncoveredValue, stage);
 }
 
-/* Sets all values in array to zero. */
-void clearMatrix(int **matrix, int size)
-{
-    int i, j;
-
-    for(i = 0; i < size; i++)
-    {
-        for(j = 0; j < size; j++)
-        {
-            matrix[i][j] = 0;
-        }
-    }
-}
-
 /* Step 5 */
 void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage)
 {
     int row, column, x;
     int zeros[amountOfGroups][amountOfGroups];
-    /*int **zeros = (int **)malloc(sizeof(int) * amountOfGroups);
-    for (x = 0; x < amountOfGroups; x++)
-    {
-        zeros[x] = (int *) malloc(sizeof(int) * amountOfGroups);
-    }*/
 
-    /*clearMatrix(zeros, amountOfGroups);*/
     int i, j;
 
     for(i = 0; i < amountOfGroups; i++)

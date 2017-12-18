@@ -133,7 +133,7 @@ int main()
     assignFirstRound(persons, groups, amountOfGroups);
 
     int i;
-    for(i = 0; i < GROUP_MAX_SIZE - 2; i++/*i = amountOfGroups; amountOfStudents - i > amountOfGroups; i += amountOfGroups*/)
+    for(i = 0; i < GROUP_MAX_SIZE - 1; i++)
     {
         matrixGroups(groups, persons, amountOfGroups, amountOfStudents, &personCounter);
     }
@@ -142,8 +142,6 @@ int main()
     
     fclose(file);
     free(persons);
-    
-    /* Test */
 
     return 0;
 }
@@ -157,7 +155,7 @@ void printGroups(group *allGroups, int amountOfGroups)
         printf("Group %d\n", i+1);
         for(j = 0; j < allGroups[i].amountOfMembers; j++)
         {
-            printf("%d:%s\n", j+1, allGroups[i].members[j].name);
+            printf("%d:%s\n", j + 1, allGroups[i].members[j].name);
         }
         printf("\n\n");
     }

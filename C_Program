@@ -148,6 +148,7 @@ int main()
     return 0;
 }
 
+/* Prints all groups with group members. */
 void printGroups(group *allGroups, int amountOfGroups)
 {
     int i, j;
@@ -727,7 +728,7 @@ int personCmp(const void *a, const void *b)
     else if(p_a->type < p_b->type)
         return 1;
     else
-        return -1;
+        return - 1;
 }
 
 /* Sorts array of profiles by persontype */

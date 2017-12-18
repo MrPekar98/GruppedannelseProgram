@@ -40,7 +40,7 @@ typedef struct person personData;
 struct group
 {
     /* Array of members */
-    personData members[GROUP_MAX_SIZE];
+    personData members[GROUP_MAX_SIZE+1];
 
     int amountOfMembers;
     /* Average values */
@@ -97,7 +97,7 @@ void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
 void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCovered, int highestValue, int *stage);
 int personCmp(const void *a, const void *b);
 void sortByPersonType(personData *array, int numberOfProfiles);
-void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int personCounter);
+void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int *personCounter);
 
 /* Main function */
 int main()
@@ -111,6 +111,8 @@ int main()
 
     const int amountOfStudents = numberOfLines(file);
     const int amountOfGroups = amountOfStudents / GROUP_MAX_SIZE;
+    const int studentsRest = amountOfStudents % GROUP_MAX_SIZE;
+
     int personCounter = 1;
 
     /* Data array: Containing all information about every student. */
@@ -128,15 +130,20 @@ int main()
     group *groups = (group *) malloc(sizeof(group) * amountOfGroups);
     assert(groups != NULL);
     sortByPersonType(persons, amountOfStudents);
+    int i;
 
     /* Algorithm */
     assignFirstRound(persons, groups, amountOfGroups);
 
-    int i;
-    for(i = 0; i < GROUP_MAX_SIZE - 1; i++)
+    /* Run through the algorithm until the matrix can't be completely filled */
+    for(i = amountOfGroups; amountOfStudents - i > amountOfGroups; i += amountOfGroups)
     {
         matrixGroups(groups, persons, amountOfGroups, amountOfStudents, &personCounter);
     }
+
+    /* Run the algorithm with the rest of the students and the first few groups */
+    personCounter = 0;
+    matrixGroups(groups, persons + amountOfStudents - studentsRest, studentsRest, studentsRest, &personCounter);
 
     printGroups(groups, amountOfGroups);
     
@@ -155,9 +162,9 @@ void printGroups(group *allGroups, int amountOfGroups)
         printf("Group %d\n", i+1);
         for(j = 0; j < allGroups[i].amountOfMembers; j++)
         {
-            printf("%d:%s\n", j + 1, allGroups[i].members[j].name);
+            printf("%d:%s\n", j+1, allGroups[i].members[j].name);
         }
-        printf("\n\n");
+        printf("Overall average:%d\n\n", (allGroups[i].averagePlant + allGroups[i].averageSpecialist + allGroups[i].averageShaper + allGroups[i].averageImplementer + allGroups[i].averageCoordinator + allGroups[i].averageTeamworker + allGroups[i].averageMonitorEvaluator + allGroups[i].averageCompleterFinisher + allGroups[i].averageResourceInvestigator)/9);
     }
 }
 
@@ -381,13 +388,12 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
         }
     }
     
-    (*personCounter)++;
-    
     /* Hungarian algorithm. */
     hungarianAlgorithm(matrixArray, amountOfGroups, colCovered, rowCovered);
 
     /* Assignment */
-    assignGroupMembers(matrixArray, amountOfGroups, groups, persons, *personCounter);
+    assignGroupMembers(matrixArray, amountOfGroups, groups, persons, personCounter);
+    (*personCounter) += 1;
 }
 
 /* Hungarian algorithm */
@@ -424,9 +430,9 @@ void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCover
 }
 
 /* Assigns person to their group. */
-void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int personCounter)
+void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int *personCounter)
 {
-    int row, column;
+    int row, column, p = 1;
 
     for (row = 0; row < amountOfGroups; row++)
     {
@@ -434,7 +440,7 @@ void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGrou
         {
             if (matrixArray[row][column].assignStage == 'S')
             {
-                allGroups[column].members[allGroups[column].amountOfMembers] = persons[row + amountOfGroups * personCounter];
+                allGroups[column].members[allGroups[column].amountOfMembers] = persons[row + amountOfGroups * *personCounter];
                 allGroups[column].amountOfMembers++;
             }
         }
@@ -634,7 +640,8 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
 /* Step 5 */
 void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage)
 {
-    int row, column, x;
+    int row, column;
+
     int zeros[amountOfGroups][amountOfGroups];
 
     int i, j;

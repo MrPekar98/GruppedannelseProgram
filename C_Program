@@ -65,11 +65,17 @@ typedef struct matrix matrix;
 
 /* Protocols */
 void printGroups(group *allGroups, int amountOfGroups);
-int numberOfLines(FILE *f);
+
+int  numberOfLines(FILE *f);
 void personDataAssignment(FILE *file, personData *DataArray, int arraySize);
-int groupSize(personData *groupMembers);
+
+void sortByPersonType(personData *array, int numberOfProfiles);
+int  personCmp(const void *a, const void *b);
+
 void assignFirstRound(personData *persons, group *groups, int amountOfGroups);
+
 void averageBelbinTypeAssignment(group *theGroup);
+
 void plantAverageAssign(group *theGroup);
 void monitiorEvaluatorAverageAssign(group *theGroup);
 void specialistAverageAssign(group *theGroup);
@@ -79,23 +85,27 @@ void completerFinisherAverageAssign(group *theGroup);
 void coordinatorAverageAssign(group *theGroup);
 void teamworkerAverageAssign(group *theGroup);
 void resourceInvestigatorAverageAssign(group *theGroup);
-int calValue(personData person, group g);
+
 void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons, int *personCounter);
+int  calValue(personData person, group g);
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered);
-int personCmp(const void *a, const void *b);
-void sortByPersonType(personData *array, int numberOfProfiles);
-int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
-void substractHighestValue(matrix **matrixArray, int amountOfGroups);
+
 void Step1(matrix **matrixArray, int amountOfGroups);
-int isZeroInRow(matrix **matrixArray, int amountOfGroups, int row);
-int isZeroInColumn(matrix **matrixArray, int amountOfGroups, int column);
+int  findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
+void substractHighestValue(matrix **matrixArray, int amountOfGroups);
+
 void Step2(matrix **matrixArray, int amountOfGroups);
-int isDone(int *colCovered, int amountOfGroups);
-void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered);
+int  isZeroInRow(matrix **matrixArray, int amountOfGroups, int row);
+int  isZeroInColumn(matrix **matrixArray, int amountOfGroups, int column);
+
 void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
+int  isDone(int *colCovered, int amountOfGroups);
+void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *colCovered);
+
 void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
 void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage);
 void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCovered, int highestValue, int *stage);
+
 void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int *personCounter);
 
 /* Main function */
@@ -124,17 +134,17 @@ int main()
     }
 
     personDataAssignment(file, persons, amountOfStudents);
+    sortByPersonType(persons, amountOfStudents);
 
     /* Array of groups. */
     group *groups = (group *) malloc(sizeof(group) * amountOfGroups);
     assert(groups != NULL);
-    sortByPersonType(persons, amountOfStudents);
-    int i;
 
     /* Algorithm */
     assignFirstRound(persons, groups, amountOfGroups);
 
     /* Run through the algorithm until the matrix can't be completely filled */
+    int i;
     for(i = amountOfGroups; amountOfStudents - i > amountOfGroups; i += amountOfGroups)
     {
         matrixGroups(groups, persons, amountOfGroups, amountOfStudents, &personCounter);
@@ -191,19 +201,24 @@ void personDataAssignment(FILE *file, personData *DataArray, int arraySize)
     }
 }
 
-/* Returns size of a group. */
-int groupSize(personData *groupMembers)
+/* Sorts array of profiles by persontype */
+void sortByPersonType(personData *array, int numberOfProfiles)
 {
-    int i;
-    for (i = 0;i < GROUP_MAX_SIZE; i++)
-    {
-        if (groupMembers[i].type != 1 && groupMembers[i].type != 2 && groupMembers[i].type != 3 && groupMembers[i].type != 4)
-        {
-            break;
-        }
-    }
+    qsort(array, numberOfProfiles, sizeof(personData), personCmp);
+}
 
-    return i+1;
+/* Compares two profiles' persontype value */
+int personCmp(const void *a, const void *b)
+{
+    personData *p_a = (personData*) a;
+    personData *p_b = (personData*) b;
+
+    if(p_a->type == p_b->type)
+        return 0;
+    else if(p_a->type < p_b->type)
+        return 1;
+    else
+        return - 1;
 }
 
 /* Putting one person in each group as first round. */
@@ -340,22 +355,6 @@ void resourceInvestigatorAverageAssign(group *theGroup)
     (*theGroup).averageResourceInvestigator = sum / theGroup->amountOfMembers;
 }
 
-/* Calculates the combines differences of one person and one group */
-int calValue(personData person, group g)
-{
-    int value = abs(person.belbin.plant - g.averagePlant) +
-            abs(person.belbin.monitorEvaluator - g.averageMonitorEvaluator) +
-            abs(person.belbin.specialist - g.averageSpecialist) +
-            abs(person.belbin.shaper - g.averageShaper) +
-            abs(person.belbin.implementer - g.averageImplementer) +
-            abs(person.belbin.completerFinisher - g.averageCompleterFinisher) +
-            abs(person.belbin.coordinator - g.averageCoordinator) +
-            abs(person.belbin.teamworker - g.averageTeamworker) +
-            abs(person.belbin.resourceInvestigator - g.averageResourceInvestigator);
-
-    return value;
-}
-
 /* Main function for creating groups. Argument groups is an array. */
 void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons, int *personCounter)
 {
@@ -395,6 +394,22 @@ void matrixGroups(group *groups, personData *persons, int amountOfGroups, int am
     (*personCounter) += 1;
 }
 
+/* Calculates the combines differences of one person and one group */
+int calValue(personData person, group g)
+{
+    int value = abs(person.belbin.plant - g.averagePlant) +
+            abs(person.belbin.monitorEvaluator - g.averageMonitorEvaluator) +
+            abs(person.belbin.specialist - g.averageSpecialist) +
+            abs(person.belbin.shaper - g.averageShaper) +
+            abs(person.belbin.implementer - g.averageImplementer) +
+            abs(person.belbin.completerFinisher - g.averageCompleterFinisher) +
+            abs(person.belbin.coordinator - g.averageCoordinator) +
+            abs(person.belbin.teamworker - g.averageTeamworker) +
+            abs(person.belbin.resourceInvestigator - g.averageResourceInvestigator);
+
+    return value;
+}
+
 /* Hungarian algorithm */
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered)
 {
@@ -428,39 +443,10 @@ void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCover
     }
 }
 
-/* Compares two profiles' persontype value */
-int personCmp(const void *a, const void *b)
+/* Step 1 */
+void Step1(matrix **matrixArray, int amountOfGroups)
 {
-    personData *p_a = (personData*) a;
-    personData *p_b = (personData*) b;
-
-    if(p_a->type == p_b->type)
-        return 0;
-    else if(p_a->type < p_b->type)
-        return 1;
-    else
-        return - 1;
-}
-
-/* Sorts array of profiles by persontype */
-void sortByPersonType(personData *array, int numberOfProfiles)
-{
-    qsort(array, numberOfProfiles, sizeof(personData), personCmp);
-}
-
-/* Finds all values in a row with the highest value in the row. */
-int findHighestValue(matrix **matrixArray, int row, int amountOfGroups)
-{
-    int j, highestValue = 0;
-    for (j = 0; j < amountOfGroups; j++)
-    {
-        if (matrixArray[row][j].value > highestValue)
-        {
-            highestValue = matrixArray[row][j].value;
-        }
-    }
-    
-    return highestValue;
+    substractHighestValue(matrixArray, amountOfGroups);
 }
 
 /* Subtract all values by highest value. */
@@ -478,10 +464,35 @@ void substractHighestValue(matrix **matrixArray, int amountOfGroups)
     }
 }
 
-/* Step 1 */
-void Step1(matrix **matrixArray, int amountOfGroups)
+/* Finds all values in a row with the highest value in the row. */
+int findHighestValue(matrix **matrixArray, int row, int amountOfGroups)
 {
-    substractHighestValue(matrixArray, amountOfGroups);
+    int j, highestValue = 0;
+    for (j = 0; j < amountOfGroups; j++)
+    {
+        if (matrixArray[row][j].value > highestValue)
+        {
+            highestValue = matrixArray[row][j].value;
+        }
+    }
+    
+    return highestValue;
+}
+
+/* Step 2  */
+void Step2(matrix **matrixArray, int amountOfGroups)
+{
+    int i, j;
+    for (i = 0; i < amountOfGroups; i++)
+    {
+        for (j = 0; j < amountOfGroups; j++)
+        {
+            if (matrixArray[i][j].value == 0 && !isZeroInRow(matrixArray, amountOfGroups, i) && !isZeroInColumn(matrixArray, amountOfGroups, j))
+            {
+                matrixArray[i][j].assignStage = 'S';
+            }
+        }
+    }
 }
 
 /* Boolean checking whether there is a zero in a row. */
@@ -514,19 +525,19 @@ int isZeroInColumn(matrix **matrixArray, int amountOfGroups, int column)
     return 0;
 }
 
-/* Step 2  */
-void Step2(matrix **matrixArray, int amountOfGroups)
+/* Step 3 in the algorithm */
+void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
 {
-    int i, j;
-    for (i = 0; i < amountOfGroups; i++)
+    markColumnsWithStarredZero(matrixArray, amountOfGroups, colCovered);
+
+    if (isDone(colCovered, amountOfGroups))
     {
-        for (j = 0; j < amountOfGroups; j++)
-        {
-            if (matrixArray[i][j].value == 0 && !isZeroInRow(matrixArray, amountOfGroups, i) && !isZeroInColumn(matrixArray, amountOfGroups, j))
-            {
-                matrixArray[i][j].assignStage = 'S';
-            }
-        }
+        *stage = DONE;
+    }
+    
+    else
+    {
+        *stage = 4;
     }
 }
 
@@ -559,22 +570,6 @@ void markColumnsWithStarredZero(matrix **matrixArray, int amountOfGroups, int *c
                 break;
             }
         }
-    }
-}
-
-/* Step 3 in the algorithm */
-void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage)
-{
-    markColumnsWithStarredZero(matrixArray, amountOfGroups, colCovered);
-
-    if (isDone(colCovered, amountOfGroups))
-    {
-        *stage = DONE;
-    }
-    
-    else
-    {
-        *stage = 4;
     }
 }
 
@@ -616,7 +611,7 @@ void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
         }
     }
 
-    /* TODO: Save the largest value of the uncovered elements */
+    /* Save the largest value of the uncovered elements */
     for (row = 0; row < amountOfGroups; row++)
     {
         if (!rowCovered[row])
@@ -647,6 +642,7 @@ void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
 
     int i, j;
 
+    /* Clear all elements in zeros matrix */
     for(i = 0; i < amountOfGroups; i++)
     {
         for(j = 0; j < amountOfGroups; j++)
@@ -655,7 +651,7 @@ void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
         }
     }
 
-    zeros[rowZero][colZero] = 1;           /* "1" represents a primed zero, 2 represents a starred zero */
+    zeros[rowZero][colZero] = 1;    /* "1" represents a primed zero, 2 represents a starred zero */
 
     /* Record a number of alternating starred and primed zeros */
     while(isZeroInColumn(matrixArray, amountOfGroups, colZero))

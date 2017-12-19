@@ -106,7 +106,7 @@ int main()
     
     if (file == NULL)              /* File does not exist. */
     {
-        printf("\nFile does not exist.\n");
+        printf("\nTextfile does not exist.\n");
     }
 
     const int amountOfStudents = numberOfLines(file);

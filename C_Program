@@ -82,6 +82,8 @@ void resourceInvestigatorAverageAssign(group *theGroup);
 int calValue(personData person, group g);
 void matrixGroups(group *groups, personData *persons, int amountOfGroups, int amountOfPersons, int *personCounter);
 void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCovered, int *rowCovered);
+int personCmp(const void *a, const void *b);
+void sortByPersonType(personData *array, int numberOfProfiles);
 int findHighestValue(matrix **matrixArray, int row, int amountOfGroups);
 void substractHighestValue(matrix **matrixArray, int amountOfGroups);
 void Step1(matrix **matrixArray, int amountOfGroups);
@@ -94,8 +96,6 @@ void Step3(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCo
 void Step4(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int *stage);
 void Step5(matrix **matrixArray, int amountOfGroups, int *colCovered, int *rowCovered, int rowZero, int colZero, int *stage);
 void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCovered, int highestValue, int *stage);
-int personCmp(const void *a, const void *b);
-void sortByPersonType(personData *array, int numberOfProfiles);
 void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int *personCounter);
 
 /* Main function */
@@ -428,22 +428,24 @@ void hungarianAlgorithm(matrix *matrixArray[], int amountOfGroups, int *colCover
     }
 }
 
-/* Assigns person to their group. */
-void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int *personCounter)
+/* Compares two profiles' persontype value */
+int personCmp(const void *a, const void *b)
 {
-    int row, column, p = 1;
+    personData *p_a = (personData*) a;
+    personData *p_b = (personData*) b;
 
-    for (row = 0; row < amountOfGroups; row++)
-    {
-        for (column = 0; column < amountOfGroups; column++)
-        {
-            if (matrixArray[row][column].assignStage == 'S')
-            {
-                allGroups[column].members[allGroups[column].amountOfMembers] = persons[row + amountOfGroups * *personCounter];
-                allGroups[column].amountOfMembers++;
-            }
-        }
-    }
+    if(p_a->type == p_b->type)
+        return 0;
+    else if(p_a->type < p_b->type)
+        return 1;
+    else
+        return - 1;
+}
+
+/* Sorts array of profiles by persontype */
+void sortByPersonType(personData *array, int numberOfProfiles)
+{
+    qsort(array, numberOfProfiles, sizeof(personData), personCmp);
 }
 
 /* Finds all values in a row with the highest value in the row. */
@@ -721,22 +723,20 @@ void Step6(matrix **matrixArray, int amountOfGroups, int *rowCovered, int *colCo
     *stage = 4;
 }
 
-/* Compares two profiles' persontype value */
-int personCmp(const void *a, const void *b)
+/* Assigns person to their group. */
+void assignGroupMembers(matrix **matrixArray, int amountOfGroups, group *allGroups, personData *persons, int *personCounter)
 {
-    personData *p_a = (personData*) a;
-    personData *p_b = (personData*) b;
+    int row, column;
 
-    if(p_a->type == p_b->type)
-        return 0;
-    else if(p_a->type < p_b->type)
-        return 1;
-    else
-        return - 1;
-}
-
-/* Sorts array of profiles by persontype */
-void sortByPersonType(personData *array, int numberOfProfiles)
-{
-    qsort(array, numberOfProfiles, sizeof(personData), personCmp);
+    for (row = 0; row < amountOfGroups; row++)
+    {
+        for (column = 0; column < amountOfGroups; column++)
+        {
+            if (matrixArray[row][column].assignStage == 'S')
+            {
+                allGroups[column].members[allGroups[column].amountOfMembers] = persons[row + amountOfGroups * *personCounter];
+                allGroups[column].amountOfMembers++;
+            }
+        }
+    }
 }
